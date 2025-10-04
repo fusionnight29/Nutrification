@@ -322,6 +322,7 @@
             let waterIntake = 0;
             let weightLog = {};
             let currentlyViewedDate = new Date();
+            let editingFoodIndex = null;
 
             // --- CONSTANTS ---
             const ACHIEVEMENTS = {
@@ -375,7 +376,7 @@
                 foodNamePlaceholder: { en: 'Food Name', hi: 'भोजन का नाम', bn: 'খাবারের নাম' },
                 caloriesPer100: { en: 'Calories per 100 units', hi: 'प्रति 100 units कैलोरी', bn: 'প্রতি 100 ইউনিটে ক্যালোরি' },
                 proteinPer100: { en: 'Protein (g) per 100 units', hi: 'प्रति 100 units प्रोटीन (g)', bn: 'প্রতি 100 ইউনিটে প্রোটিন (g)' },
-                carbsPer100: { en: 'Carbs (g) per 100 units', hi: 'प्रति 100 units कार्ब्स (g)', bn: 'प्रति 100 ইউনিটে কার্বোহাইড্রেট (g)' },
+                carbsPer100: { en: 'Carbs (g) per 100 units', hi: 'प्रति 100 units कार्ब्स (g)', bn: 'প্রতি 100 ইউনিটে কার্বোহাইড্রেট (g)' },
                 fatPer100: { en: 'Fat (g) per 100 units', hi: 'प्रति 100 units वसा (g)', bn: 'প্রতি 100 ইউনিটে ফ্যাট (g)' },
                 saveFoodButton: { en: 'Save Food', hi: 'खाना सहेजें', bn: 'খাবার সংরক্ষণ করুন' },
                 bulkImportTitle: { en: 'Bulk Data Import', hi: 'थोक डेटा आयात', bn: 'বাল্ক ডেটা ইম্পোর্ট' },
@@ -647,7 +648,7 @@
                 foodDatabase.forEach((food, index) => {
                     const itemEl = document.createElement('div');
                     itemEl.className = 'flex justify-between items-center p-2 bg-gray-100 dark:bg-slate-700/50 rounded-md text-sm';
-                    itemEl.innerHTML = `<div><p class="font-semibold">${food.name}</p><p class="text-xs">${food.calories} kcal / 100${food.unit}</p></div><button data-index="${index}" class="btn btn-danger delete-food-btn">X</button>`;
+                    itemEl.innerHTML = `<div><p class="font-semibold">${food.name}</p><p class="text-xs">${food.calories} kcal / 100${food.unit}</p></div><div><button data-index="${index}" class="btn btn-secondary edit-food-btn !p-2 !px-3 mr-2">Edit</button><button data-index="${index}" class="btn btn-danger delete-food-btn !p-2 !px-3">X</button></div>`;
                     foodDatabaseList.appendChild(itemEl);
                     const optionEl = document.createElement('option');
                     optionEl.value = index; optionEl.textContent = `${food.name} (per 100${food.unit})`;
@@ -879,6 +880,7 @@
 
             // --- EVENT LISTENERS ---
             fab.addEventListener('click', () => {
+                editingFoodIndex = null;
                 el('add-food-form').reset();
                 el('micros-inputs-container').innerHTML = '';
                 el('micros-inputs-container').classList.add('hidden');
@@ -898,7 +900,7 @@
 
             el('add-food-form').addEventListener('submit', (e) => { 
                 e.preventDefault(); 
-                const newFood = { 
+                const foodData = { 
                     name: el('food-name').value, unit: el('food-unit').value, 
                     calories: parseFloat(el('calories').value) || 0, protein: parseFloat(el('protein').value) || 0, 
                     carbs: parseFloat(el('carbs').value) || 0, fat: parseFloat(el('fat').value) || 0,
@@ -908,18 +910,62 @@
 
                 document.querySelectorAll('#micros-inputs-container input').forEach(input => {
                     const value = parseFloat(input.value);
-                    if(value > 0) newFood.micros[input.dataset.micro] = value;
+                    if(value > 0) foodData.micros[input.dataset.micro] = value;
                 });
                 
-                foodDatabase.push(newFood);
+                if(editingFoodIndex !== null) {
+                    foodDatabase[editingFoodIndex] = foodData;
+                } else {
+                    foodDatabase.push(foodData);
+                }
+                
                 e.target.reset(); 
                 saveData(); 
                 updateUI(); 
                 closeModal(modals.single); 
                 showAlert(translations.foodAddedAlert[currentLang]); 
+                editingFoodIndex = null;
             });
-            el('bulk-import-btn').addEventListener('click', () => { const lines = el('bulk-import-data').value.trim().split('\n'); let added = 0, invalid = []; lines.forEach((line, i) => { if (!line.trim()) return; const parts = line.split(','); if (parts.length === 6) { const [name, unit, cal, prot, carb, fat] = parts.map(p => p.trim()); if (name && ['g', 'ml'].includes(unit.toLowerCase()) && !isNaN(parseFloat(cal)) && !isNaN(parseFloat(prot)) && !isNaN(parseFloat(carb)) && !isNaN(parseFloat(fat))) { foodDatabase.push({ name, unit: unit.toLowerCase(), calories: parseFloat(cal), protein: parseFloat(prot), carbs: parseFloat(carb), fat: parseFloat(fat) }); added++; } else { invalid.push(i + 1); } } else { invalid.push(i + 1); } }); if (added > 0) { el('bulk-import-data').value = ''; saveData(); updateUI(); closeModal(modals.bulk); let msg = `${added} food(s) imported.`; if (invalid.length > 0) msg += `\nFailed lines: ${invalid.join(', ')}.`; showAlert(msg); } else { showAlert('Import failed. Check format.'); } });
-            foodDatabaseList.addEventListener('click', (e) => { if (e.target.classList.contains('delete-food-btn')) { const i = parseInt(e.target.dataset.index); foodDatabase.splice(i, 1); dailyLog = dailyLog.filter(l => l.foodIndex !== i).map(l => { if (l.foodIndex > i) l.foodIndex--; return l; }); saveData(); updateUI(); } });
+            el('bulk-import-btn').addEventListener('click', () => { const lines = el('bulk-import-data').value.trim().split('\n'); let added = 0, invalid = []; lines.forEach((line, i) => { if (!line.trim()) return; const parts = line.split(','); if (parts.length === 6) { const [name, unit, cal, prot, carb, fat] = parts.map(p => p.trim()); if (name && ['g', 'ml'].includes(unit.toLowerCase()) && !isNaN(parseFloat(cal)) && !isNaN(parseFloat(prot)) && !isNaN(parseFloat(carb)) && !isNaN(parseFloat(fat))) { foodDatabase.push({ name, unit: unit.toLowerCase(), calories: parseFloat(cal), protein: parseFloat(prot), carbs: parseFloat(carb), fat: parseFloat(fat), portions: {}, micros: {} }); added++; } else { invalid.push(i + 1); } } else { invalid.push(i + 1); } }); if (added > 0) { el('bulk-import-data').value = ''; saveData(); updateUI(); closeModal(modals.bulk); let msg = `${added} food(s) imported.`; if (invalid.length > 0) msg += `\nFailed lines: ${invalid.join(', ')}.`; showAlert(msg); } else { showAlert('Import failed. Check format.'); } });
+            foodDatabaseList.addEventListener('click', (e) => { 
+                const button = e.target.closest('button');
+                if(!button) return;
+
+                const index = parseInt(button.dataset.index);
+
+                if (button.classList.contains('delete-food-btn')) {
+                    foodDatabase.splice(index, 1); 
+                    dailyLog = dailyLog.filter(l => l.foodIndex !== index).map(l => { if (l.foodIndex > index) l.foodIndex--; return l; }); 
+                    saveData(); 
+                    updateUI(); 
+                } else if (button.classList.contains('edit-food-btn')) {
+                    editingFoodIndex = index;
+                    const foodToEdit = foodDatabase[index];
+                    
+                    el('food-name').value = foodToEdit.name;
+                    el('food-unit').value = foodToEdit.unit;
+                    el('calories').value = foodToEdit.calories || '';
+                    el('protein').value = foodToEdit.protein || '';
+                    el('carbs').value = foodToEdit.carbs || '';
+                    el('fat').value = foodToEdit.fat || '';
+
+                    currentFoodPortions = foodToEdit.portions || {};
+                    renderCurrentPortions();
+
+                    const microsContainer = el('micros-inputs-container');
+                    microsContainer.innerHTML = '';
+                    if (foodToEdit.micros && Object.keys(foodToEdit.micros).length > 0) {
+                        el('toggle-micros-btn').click(); // Show the section
+                        Object.keys(foodToEdit.micros).forEach(microKey => {
+                            if(microsContainer.querySelector(`#micro-${microKey}`)) {
+                                microsContainer.querySelector(`#micro-${microKey}`).value = foodToEdit.micros[microKey];
+                            }
+                        });
+                    }
+
+                    openModal(modals.single);
+                }
+            });
             
             foodSelect.addEventListener('change', e => {
                 const foodIndex = e.target.value;
@@ -965,19 +1011,25 @@
             resetDayBtn.addEventListener('click', async () => { if (await showAlert(translations.resetConfirm[currentLang], [{ text: 'Cancel', resolvesTo: false }, { text: 'Reset', class: 'btn-danger', resolvesTo: true }])) { dailyLog = []; waterIntake = 0; saveData(); updateUI(); } });
             goalsForm.addEventListener('input', () => { Object.keys(dailyGoals).forEach(g => dailyGoals[g] = parseFloat(el(`goal-${g}`).value) || 0); saveData(); updateUI(); });
             adaptiveThemeToggle.addEventListener('change', (e) => { adaptiveThemeEnabled = e.target.checked; saveData(); applyTheme(); });
-            el('export-data-btn').addEventListener('click', () => { const data = {}; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key.startsWith('dailyLog_') || ['foodDatabase', 'dailyGoals', 'adaptiveThemeEnabled', 'unlockedAchievements', 'customPortions', 'weightLog'].includes(key) || key.startsWith('waterIntake_')) data[key] = JSON.parse(localStorage.getItem(key)); } const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = `nutrification-backup-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(a.href); showAlert(translations.exportSuccessAlert[currentLang]); });
+            el('export-data-btn').addEventListener('click', () => { const data = {}; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key.startsWith('dailyLog_') || ['foodDatabase', 'dailyGoals', 'adaptiveThemeEnabled', 'unlockedAchievements', 'customPortions', 'weightLog'].includes(key)) { data[key] = localStorage.getItem(key); } } const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = `nutrification-backup-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(a.href); showAlert(translations.exportSuccessAlert[currentLang]); });
             el('import-data-btn').addEventListener('click', () => el('import-file-input').click());
-            el('import-file-input').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async (event) => { try { const data = JSON.parse(event.target.result); if (await showAlert(translations.importConfirm[currentLang], [{ text: 'Cancel', resolvesTo: false }, { text: 'Import', class: 'btn-danger', resolvesTo: true }])) { Object.keys(data).forEach(key => localStorage.setItem(key, JSON.stringify(data[key]))); init(); showAlert(translations.importSuccessAlert[currentLang]); } } catch (error) { showAlert(`Error importing file: ${error.message}`); } }; reader.readAsText(file); e.target.value = ''; });
+            el('import-file-input').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async (event) => { try { const data = JSON.parse(event.target.result); if (await showAlert(translations.importConfirm[currentLang], [{ text: 'Cancel', resolvesTo: false }, { text: 'Import', class: 'btn-danger', resolvesTo: true }])) { Object.keys(data).forEach(key => localStorage.setItem(key, data[key])); init(); showAlert(translations.importSuccessAlert[currentLang]); } } catch (error) { showAlert(`Error importing file: ${error.message}`); } }; reader.readAsText(file); e.target.value = ''; });
             
             el('view-micros-btn').addEventListener('click', () => { renderMicrosModal(); openModal(modals.micros); });
             el('toggle-micros-btn').addEventListener('click', () => {
                 const container = el('micros-inputs-container');
                 container.classList.toggle('hidden');
                 if(!container.classList.contains('hidden') && container.innerHTML === '') {
-                    Object.keys(MICRONUTRIENTS).forEach(micro => {
-                        const unit = MICRONUTRIENTS[micro];
-                        container.innerHTML += `<div><label for="micro-${micro}" class="text-sm">${micro.replace('vitamin', 'Vit ')} (${unit})</label><input type="number" id="micro-${micro}" data-micro="${micro}" step="0.1" placeholder="0" class="!py-1"></div>`;
-                    });
+                    const createMicroSection = (title, keys) => {
+                        container.innerHTML += `<h4 class="col-span-2 text-md font-semibold mt-2">${title}</h4>`;
+                        keys.forEach(micro => {
+                            const unit = MICRONUTRIENTS[micro];
+                            container.innerHTML += `<div><label for="micro-${micro}" class="text-sm">${micro.replace('vitamin', 'Vit ')} (${unit})</label><input type="number" id="micro-${micro}" data-micro="${micro}" step="0.1" placeholder="0" class="!py-1"></div>`;
+                        });
+                    }
+                    createMicroSection('Vitamins', Object.keys(MICRONUTRIENTS).filter(k => k.startsWith('vitamin')));
+                    createMicroSection('Minerals', Object.keys(MICRONUTRIENTS).filter(k => !k.startsWith('vitamin') && k !== 'omega3'));
+                    createMicroSection('Fats', ['omega3']);
                 }
             });
             el('add-new-portion-btn').addEventListener('click', () => {
@@ -994,7 +1046,9 @@
             waterTracker.addEventListener('click', e => {
                 const glass = e.target.closest('.glass');
                 if(glass) {
-                    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    if(!audioCtx) {
+                        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { console.error("Web Audio API not supported"); }
+                    }
                     
                     waterIntake = parseInt(glass.dataset.index);
                     if(glass.classList.contains('filled') && waterIntake === document.querySelectorAll('.glass.filled').length) {
