@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #2196F3; /* Default Neutral Blue */
@@ -25,6 +26,7 @@
              --text-color-primary: #f1f5f9;
              --text-color-secondary: #9ca3af;
         }
+
 
         body {
             font-family: 'Inter', sans-serif;
@@ -67,6 +69,7 @@
         .legend-item { display: flex; align-items: center; gap: 0.4rem; }
         .legend-color-box { width: 15px; height: 15px; border-radius: 4px; }
 
+
         .btn { font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.5rem; border: none; cursor: pointer; transition: all 0.2s ease-in-out; }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
         .btn-primary { background: var(--primary-gradient); color: white; }
@@ -75,6 +78,12 @@
         .btn-secondary:hover { background-color: #d1d5db; }
         .btn-danger { background-color: #dc2626; color: white; }
         .btn-danger:hover { background-color: #b91c1c; }
+        .btn-success { background-color: #22c55e; color: white; }
+        .btn-success:hover { background-color: #16a34a; }
+        .btn-info { background-color: #06b6d4; color: white; }
+        .btn-info:hover { background-color: #0891b2; }
+        .btn-warning { background-color: #f59e0b; color: white; }
+        .btn-warning:hover { background-color: #d97706; }
         
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 50; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
         .modal-overlay.visible { opacity: 1; visibility: visible; }
@@ -82,6 +91,14 @@
         .modal-overlay.visible .modal-content { transform: scale(1); }
         .close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; line-height: 1; border: none; background: transparent; cursor: pointer; color: #6b7280; }
         .dark .close-btn { color: #9ca3af; }
+
+        .summary-report-box {
+            background-color: #f3f4f6;
+        }
+        .dark .summary-report-box {
+            background-color: #374151;
+        }
+
 
         /* FAB */
         .fab {
@@ -98,10 +115,12 @@
         }
         .fab:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
 
+
         /* Circular Progress */
         .progress-circle-container {
             position: relative;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+            cursor: pointer;
         }
         .progress-circle { width: 100%; height: 100%; }
         .progress-circle-bar { transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.5s ease; }
@@ -110,6 +129,7 @@
         .badge { opacity: 0.3; filter: grayscale(1); transition: all 0.3s; }
         .badge.unlocked { opacity: 1; filter: grayscale(0); }
         .badge-icon { font-size: 3rem; }
+
 
         /* Toggle Switch */
         .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
@@ -122,6 +142,7 @@
         .progress-container { background-color: #e5e7eb; border-radius: 9999px; height: 8px; width: 100%; overflow: hidden; margin-top: 4px; }
         .dark .progress-container { background-color: #374151; }
         .progress-bar { height: 100%; border-radius: 9999px; transition: width 0.3s ease-in-out; }
+
 
         #micros-modal-content::-webkit-scrollbar { width: 8px; }
         #micros-modal-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
@@ -136,14 +157,21 @@
         .glass.filled .water-fill { transform: translateY(0%); }
         
         #app-title {
-            background: var(--primary-gradient);
+            background: linear-gradient(45deg, #2E7D32, #4CAF50);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-weight: 800;
         }
+        #app-author {
+            font-family: 'Caveat', cursive;
+            color: #00BCD4; /* Cyan-blue */
+            font-size: 1.25rem;
+            margin-top: -0.5rem;
+        }
     </style>
 </head>
 <body class="p-4">
+
 
     <div id="app-container" class="max-w-7xl mx-auto">
         <!-- Main Dashboard View -->
@@ -152,16 +180,18 @@
                 <div class="flex items-center justify-center">
                     <h1 id="app-title" class="text-4xl sm:text-5xl">Nutrification</h1>
                 </div>
-                <p id="app-tagline" class="text-sm" style="color: var(--text-color-secondary);">Health is your real wealth</p>
+                 <p id="app-author">by NANDAN BISWAS</p>
                 <button id="open-settings-page-btn" class="absolute top-0 right-0 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
             </header>
 
+
             <div class="card !p-4 mb-6">
                 <h2 id="greeting" class="text-xl font-bold"></h2>
                 <p id="insight-message" class="text-sm" style="color: var(--text-color-secondary);"></p>
             </div>
+
 
             <div class="card">
                 <div class="flex justify-between items-center mb-4">
@@ -188,7 +218,7 @@
                     <select id="food-select" class="flex-grow" required><option value="" data-translate="selectFoodOption">-- Select a food --</option></select>
                     <input type="number" id="log-quantity" value="1" min="0.1" step="0.1" class="w-full sm:w-20" required>
                     <select id="log-unit-select" class="w-full sm:w-auto"></select>
-                    <button type="submit" class="btn btn-primary w-full sm:w-auto" data-translate="logButton">Log</button>
+                    <button type="submit" class="btn btn-success w-full sm:w-auto" data-translate="logButton">Log</button>
                 </form>
                 <hr class="my-4 border-gray-200 dark:border-gray-700">
                 <div class="flex justify-between items-center mb-3">
@@ -205,14 +235,17 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                     <div>
-                        <h3 id="monthly-chart-title" class="text-lg mb-3 text-center"></h3>
+                         <div class="flex justify-between items-center mb-3">
+                             <h3 id="monthly-chart-title" class="text-lg"></h3>
+                             <button id="view-chart-details-btn" class="btn btn-info !py-1 !px-3 text-sm">View Details</button>
+                         </div>
                         <canvas id="monthly-chart"></canvas>
                         <canvas id="weight-chart" class="mt-6"></canvas>
                     </div>
                     <div><h3 id="heatmap-title" class="text-lg mb-3 text-center"></h3><div id="heatmap" class="heatmap-grid"></div><div id="heatmap-legend" class="heatmap-legend"></div></div>
                 </div>
                 <div class="text-center mt-4">
-                     <button id="log-weight-btn" class="btn btn-secondary text-sm">Log Today's Weight</button>
+                     <button id="log-weight-btn" class="btn btn-info text-sm">Log Today's Weight</button>
                  </div>
             </div>
         </div>
@@ -242,9 +275,13 @@
                         <div><label for="goal-fat" class="block text-sm font-medium">Fat (g)</label><input type="number" id="goal-fat" min="0" placeholder="75"></div>
                     </form>
                 </div>
+                 <div class="card">
+                    <h2 class="text-xl mb-4" data-translate="microsGoalsTitle">Set Custom Micronutrient Goals (Monthly)</h2>
+                    <div id="micros-goals-container" class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4"></div>
+                </div>
                 <div class="card">
                     <h3 class="text-lg mb-3" data-translate="savedFoodsTitle">Saved Foods</h3>
-                    <div id="food-database-list" class="space-y-2 max-h-96 overflow-y-auto"></div>
+                    <button id="manage-foods-btn" class="btn btn-primary w-full">Manage Saved Foods</button>
                 </div>
                 <div class="card">
                     <h2 class="text-xl mb-4" data-translate="dataManagementTitle">Data Management</h2>
@@ -257,26 +294,35 @@
                         </select>
                     </div>
                     <div class="flex items-center justify-between mb-4"><label for="adaptive-theme-toggle" class="text-base" data-translate="adaptiveThemeLabel">Enable Adaptive Theme</label><label class="switch"><input type="checkbox" id="adaptive-theme-toggle"><span class="slider"></span></label></div>
-                    <div class="flex flex-col sm:flex-row gap-3"><button id="export-data-btn" class="btn btn-secondary w-full" data-translate="exportButton">Export Data</button><button id="import-data-btn" class="btn btn-secondary w-full" data-translate="importButton">Import Data</button><input type="file" id="import-file-input" class="hidden" accept=".json"></div>
+                    <div class="flex flex-col sm:flex-row gap-3"><button id="export-data-btn" class="btn btn-warning w-full" data-translate="exportButton">Export Data</button><button id="import-data-btn" class="btn btn-warning w-full" data-translate="importButton">Import Data</button><input type="file" id="import-file-input" class="hidden" accept=".json"></div>
                 </div>
             </div>
         </div>
     </div>
     
     <!-- Other Modals -->
-    <div id="add-food-choice-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 class="text-xl mb-4 text-center" data-translate="addFoodChoiceTitle">How would you like to add food?</h2><div class="flex flex-col sm:flex-row gap-4"><button id="open-single-food-modal-btn" class="btn btn-primary w-full" data-translate="addSingleFoodButton">Add Single Food</button><button id="open-bulk-import-modal-btn" class="btn btn-secondary w-full" data-translate="bulkImportButton">Bulk Import</button></div></div></div>
-    <div id="add-single-food-modal" class="modal-overlay"><div class="modal-content overflow-y-auto max-h-[90vh]"><button class="close-btn">&times;</button><h2 class="text-xl mb-4" data-translate="addSingleFoodTitle">Add a Food Item</h2><form id="add-food-form" class="space-y-3"><input type="text" id="food-name" required data-translate-placeholder="foodNamePlaceholder"><select id="food-unit" required><option value="g">Grams (g)</option><option value="ml">Milliliters (ml)</option></select><input type="number" id="calories" min="0" required data-translate-placeholder="caloriesPer100"><input type="number" id="protein" min="0" step="0.1" required data-translate-placeholder="proteinPer100"><input type="number" id="carbs" min="0" step="0.1" required data-translate-placeholder="carbsPer100"><input type="number" id="fat" min="0" step="0.1" required data-translate-placeholder="fatPer100"><hr class="my-4"><h3 class="text-lg" data-translate="portionsTitle">Custom Portions (Optional)</h3><p class="text-xs text-gray-500 mb-2">Define custom units for this food, like '1 Katori = 120g'.</p><div id="new-food-portions-container" class="space-y-2"></div><div class="flex gap-2 items-center"><input type="text" id="new-portion-name" placeholder="Portion Name (e.g., Katori)"><input type="number" id="new-portion-value" placeholder="Weight in g/ml"><button type="button" id="add-new-portion-btn" class="btn btn-secondary !px-4">Add</button></div><hr class="my-4"><button type="button" id="toggle-micros-btn" class="btn btn-secondary w-full">Add Micronutrients (Optional)</button><div id="micros-inputs-container" class="hidden grid grid-cols-2 gap-2 mt-4"></div><button type="submit" class="btn btn-primary w-full mt-4" data-translate="saveFoodButton">Save Food</button></form></div></div>
+    <div id="add-food-choice-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 class="text-xl mb-4 text-center" data-translate="addFoodChoiceTitle">How would you like to add food?</h2><div class="flex flex-col sm:flex-row gap-4"><button id="open-single-food-modal-btn" class="btn btn-primary w-full" data-translate="addSingleFoodButton">Add Single Food</button><button id="open-bulk-import-modal-btn" class="btn btn-warning w-full" data-translate="bulkImportButton">Bulk Import</button></div></div></div>
+    <div id="add-single-food-modal" class="modal-overlay"><div class="modal-content overflow-y-auto max-h-[90vh]"><button class="close-btn">&times;</button><h2 class="text-xl mb-4" data-translate="addSingleFoodTitle">Add a Food Item</h2><form id="add-food-form" class="space-y-3"><input type="text" id="food-name" required data-translate-placeholder="foodNamePlaceholder"><select id="food-unit" required><option value="g">Grams (g)</option><option value="ml">Milliliters (ml)</option></select><input type="number" id="calories" min="0" required placeholder="Calories per 100g/ml"><input type="number" id="protein" min="0" step="0.1" required placeholder="Protein (g) per 100g/ml"><input type="number" id="carbs" min="0" step="0.1" required placeholder="Carbs (g) per 100g/ml"><input type="number" id="fat" min="0" step="0.1" required placeholder="Fat (g) per 100g/ml"><hr class="my-4"><h3 class="text-lg" data-translate="portionsTitle">Custom Portions (Optional)</h3><p class="text-xs text-gray-500 mb-2">Define custom units for this food, like '1 Katori = 120g'.</p><div id="new-food-portions-container" class="space-y-2"></div><div class="flex gap-2 items-center"><input type="text" id="new-portion-name" placeholder="Portion Name (e.g., Katori)"><input type="number" id="new-portion-value" placeholder="Weight in g/ml" min="0"><button type="button" id="add-new-portion-btn" class="btn btn-warning !px-4">Add</button></div><hr class="my-4"><button type="button" id="toggle-micros-btn" class="btn btn-warning w-full">Add Micronutrients (Optional)</button><div id="micros-inputs-container" class="hidden grid grid-cols-2 gap-2 mt-4"></div><button type="button" id="toggle-breakdown-btn" class="btn btn-warning w-full mt-2">Add Macronutrient Breakdown (Optional)</button><div id="breakdown-inputs-container" class="hidden space-y-4 mt-4"></div><button type="submit" class="btn btn-success w-full mt-4" data-translate="saveFoodButton">Save Food</button></form></div></div>
     <div id="bulk-import-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 class="text-xl mb-4" data-translate="bulkImportTitle">Bulk Data Import</h2><p class="text-sm mb-2" data-translate="bulkImportInstructions">Enter one food per line. Format: <code class="text-xs">Name,Unit,Cals,Prot,Carb,Fat</code></p><textarea id="bulk-import-data" rows="5" data-translate-placeholder="bulkImportPlaceholder"></textarea><button id="bulk-import-btn" class="btn btn-primary w-full mt-3" data-translate="importFoodsButton">Import Foods</button></div></div>
     <div id="alert-modal" class="modal-overlay"><div class="modal-content p-6 rounded-lg w-full max-w-sm text-center"><p id="alert-modal-message" class="mb-5 whitespace-pre-wrap"></p><div id="alert-modal-buttons" class="flex justify-center gap-3"></div></div></div>
     <div id="heatmap-detail-modal" class="modal-overlay"><div class="modal-content !max-w-md text-center"><button class="close-btn">&times;</button><h2 id="heatmap-detail-title" class="text-xl mb-4"></h2><div class="space-y-2"><p><span data-translate="statusLabel">Status</span>: <span id="heatmap-detail-status" class="font-semibold"></span></p><p><span data-translate="intakeLabel">Intake</span>: <span id="heatmap-detail-intake" class="font-semibold"></span></p><p><span data-translate="targetLabel">Target</span>: <span id="heatmap-detail-target" class="font-semibold"></span></p><p><span data-translate="varianceLabel">Variance</span>: <span id="heatmap-detail-variance" class="font-semibold"></span></p><p id="heatmap-detail-weight-container" class="hidden">Weight: <span id="heatmap-detail-weight" class="font-semibold"></span></p></div></div></div>
-    <div id="micros-modal" class="modal-overlay"><div class="modal-content !max-w-lg"><button class="close-btn">&times;</button><h2 class="text-xl mb-4" data-translate="microsTitle">Monthly Micronutrient Details</h2><div id="micros-modal-content" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 max-h-[60vh] overflow-y-auto pr-2"></div></div></div>
-    <div id="log-weight-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 class="text-xl mb-4">Log Your Weight</h2><form id="log-weight-form"><input type="number" id="weight-input" step="0.1" required placeholder="Enter weight in kg"><button type="submit" class="btn btn-primary w-full mt-4">Save Weight</button></form></div></div>
-    
+    <div id="micros-modal" class="modal-overlay"><div class="modal-content !max-w-lg"><button class="close-btn">&times;</button><h2 class="text-xl mb-4" data-translate="microsTitle">Monthly Micronutrient Details</h2><div id="micros-summary-report" class="summary-report-box text-sm mb-4 p-3 rounded-md"></div><div id="micros-modal-content" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 max-h-[60vh] overflow-y-auto pr-2"></div></div></div>
+    <div id="log-weight-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 class="text-xl mb-4">Log Your Weight</h2><form id="log-weight-form"><input type="number" id="weight-input" step="0.1" required placeholder="Enter weight in kg" min="0"><button type="submit" class="btn btn-primary w-full mt-4">Save Weight</button></form></div></div>
+    <div id="pie-chart-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 id="pie-chart-title" class="text-xl mb-4 text-center"></h2><canvas id="pie-chart-canvas"></canvas></div></div>
+    <div id="monthly-chart-detail-modal" class="modal-overlay"><div class="modal-content !max-w-2xl"><button class="close-btn">&times;</button><h2 id="monthly-chart-detail-title" class="text-xl mb-4 text-center"></h2><canvas id="monthly-chart-detail-canvas"></canvas></div></div>
+    <div id="manage-foods-modal" class="modal-overlay"><div class="modal-content !max-w-lg"><button class="close-btn">&times;</button><h2 class="text-xl mb-4">Manage Saved Foods</h2><input type="search" id="food-db-search" placeholder="Search your foods..." class="mb-4"><div id="manage-food-list" class="space-y-2 max-h-[60vh] overflow-y-auto"></div></div></div>
+
+    <footer class="text-center p-4 mt-8 text-sm text-gray-500">
+        For comments, feature requests, or to request a bulk diet plan import, please mail to: 
+        <a href="mailto:fusionnight29@gmail.com" class="text-blue-500 hover:underline">fusionnight29@gmail.com</a>.
+    </footer>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const el = (id) => document.getElementById(id);
             const root = document.documentElement;
             let audioCtx;
+
 
             // --- DOM ELEMENTS ---
             const greetingEl = el('greeting');
@@ -288,7 +334,6 @@
             const achievementsGrid = el('achievements-grid');
             const adaptiveThemeToggle = el('adaptive-theme-toggle');
             const languageSelect = el('language-select');
-            const foodDatabaseList = el('food-database-list');
             const foodSelect = el('food-select');
             const logFoodForm = el('log-food-form');
             const dailyLogList = el('daily-log-list');
@@ -304,17 +349,26 @@
             const logWeightBtn = el('log-weight-btn');
             const prevMonthBtn = el('prev-month-btn');
             const nextMonthBtn = el('next-month-btn');
+            const microsGoalsContainer = el('micros-goals-container');
+            const viewChartDetailsBtn = el('view-chart-details-btn');
+            const manageFoodsBtn = el('manage-foods-btn');
+
 
             const modals = {
                 choice: el('add-food-choice-modal'), single: el('add-single-food-modal'),
                 bulk: el('bulk-import-modal'), settings: settingsPage,
                 alert: el('alert-modal'), heatmapDetail: el('heatmap-detail-modal'),
                 micros: el('micros-modal'), weight: el('log-weight-modal'),
+                pie: el('pie-chart-modal'),
+                monthlyChartDetail: el('monthly-chart-detail-modal'),
+                manageFoods: el('manage-foods-modal'),
             };
 
+
             // --- STATE ---
-            let foodDatabase = [], dailyLog = [], monthlyChart, weightChart;
+            let foodDatabase = [], dailyLog = [], monthlyChart, monthlyDetailChart, weightChart, pieChart;
             let dailyGoals = { calories: 2300, protein: 170, carbs: 230, fat: 75 };
+            let customMicrosGoals = {};
             let unlockedAchievements = [];
             let adaptiveThemeEnabled = true;
             let currentLang = 'en';
@@ -323,6 +377,7 @@
             let weightLog = {};
             let currentlyViewedDate = new Date();
             let editingFoodIndex = null;
+
 
             // --- CONSTANTS ---
             const ACHIEVEMENTS = {
@@ -343,6 +398,22 @@
                 iron: 'mg', calcium: 'mg', zinc: 'mg', magnesium: 'mg', potassium: 'mg', sodium: 'mg',
                 omega3: 'g'
             };
+             const MACRO_BREAKDOWNS = {
+                carbs: {
+                    label: 'Carbohydrates',
+                    fields: { fiber: 'Dietary Fiber (g)', natural_sugars: 'Natural Sugars (g)', added_sugars: 'Added Sugars (g)' }
+                },
+                fat: {
+                    label: 'Fats',
+                    fields: { saturated: 'Saturated (g)', polyunsaturated: 'Polyunsaturated (g)', monounsaturated: 'Monounsaturated (g)', trans: 'Trans (g)' }
+                },
+                protein: {
+                     label: 'Protein',
+                    fields: { essential: 'Essential (g)', non_essential: 'Non-Essential (g)'}
+                }
+            };
+
+
 
 
             // --- TRANSLATIONS ---
@@ -356,13 +427,13 @@
                 monthlyOverviewTitle: { en: 'Monthly Overview', hi: 'Monthly Overview', bn: 'Monthly Overview' },
                 logFoodTitle: { en: 'Log Food for Today', hi: 'आज के लिए खाना लॉग करें', bn: 'আজকের জন্য খাবার লগ করুন' },
                 selectFoodOption: { en: '-- Select a food --', hi: '-- एक भोजन चुनें --', bn: '-- একটি খাবার নির্বাচন করুন --' },
-                amountPlaceholder: { en: 'Amount', hi: 'मात्रा', bn: 'পরিমাণ' },
                 logButton: { en: 'Log', hi: 'लॉग', bn: 'লগ' },
                 todaysLogTitle: { en: "Today's Log", hi: "आज का Log", bn: "আজকের Log" },
                 resetButton: { en: 'Reset', hi: 'रीसेट', bn: 'রিসেট' },
                 settingsTitle: { en: 'Settings & Tools', hi: 'सेटिंग्स और उपकरण', bn: 'সেটিংস এবং টুলস' },
                 achievementsTitle: { en: 'Achievements', hi: 'उपलब्धियां', bn: 'কৃতিত্ব' },
                 goalsTitle: { en: 'Set Your Daily Goals', hi: 'अपने दैनिक लक्ष्य निर्धारित करें', bn: 'আপনার দৈনিক লক্ষ্য সেট করুন' },
+                microsGoalsTitle: { en: 'Set Custom Micronutrient Goals (Monthly)', hi: 'कस्टम Micronutrient लक्ष्य निर्धारित करें (मासिक)', bn: 'কাস্টম Micronutrient লক্ষ্য সেট করুন (মাসিক)' },
                 savedFoodsTitle: { en: 'Saved Foods', hi: 'सहेजे गए खाद्य पदार्थ', bn: 'সংরক্ষিত খাবার' },
                 dataManagementTitle: { en: 'Data Management', hi: 'डेटा प्रबंधन', bn: 'ডেটা ম্যানেজমেন্ট' },
                 languageLabel: { en: 'Language', hi: 'भाषा', bn: 'ভাষা' },
@@ -374,15 +445,11 @@
                 bulkImportButton: { en: 'Bulk Import', hi: 'थोक आयात', bn: 'বাল্ক ইম্পোর্ট' },
                 addSingleFoodTitle: { en: 'Add a Food Item', hi: 'एक खाद्य आइटम जोड़ें', bn: 'একটি খাদ্য আইটেম যোগ করুন' },
                 foodNamePlaceholder: { en: 'Food Name', hi: 'भोजन का नाम', bn: 'খাবারের নাম' },
-                caloriesPer100: { en: 'Calories per 100 units', hi: 'प्रति 100 units कैलोरी', bn: 'প্রতি 100 ইউনিটে ক্যালোরি' },
-                proteinPer100: { en: 'Protein (g) per 100 units', hi: 'प्रति 100 units प्रोटीन (g)', bn: 'প্রতি 100 ইউনিটে প্রোটিন (g)' },
-                carbsPer100: { en: 'Carbs (g) per 100 units', hi: 'प्रति 100 units कार्ब्स (g)', bn: 'প্রতি 100 ইউনিটে কার্বোহাইড্রেট (g)' },
-                fatPer100: { en: 'Fat (g) per 100 units', hi: 'प्रति 100 units वसा (g)', bn: 'প্রতি 100 ইউনিটে ফ্যাট (g)' },
                 saveFoodButton: { en: 'Save Food', hi: 'खाना सहेजें', bn: 'খাবার সংরক্ষণ করুন' },
                 bulkImportTitle: { en: 'Bulk Data Import', hi: 'थोक डेटा आयात', bn: 'বাল্ক ডেটা ইম্পোর্ট' },
-                bulkImportInstructions: { en: 'Enter one food per line. Format: Name,Unit,Cals,Prot,Carb,Fat', hi: 'प्रति पंक्ति एक भोजन दर्ज करें। प्रारूप: নাম,इकाई,कैलोरी,प्रोटीन,कार्ब,वसा', bn: 'প্রতি লাইনে একটি করে খাবার লিখুন। ফরম্যাট: নাম, ইউনিট, ক্যালোরি, প্রোটিন, কার্ব, ফ্যাট' },
+                bulkImportInstructions: { en: 'Enter one food per line. Format: Name,Unit,Cals,Prot,Carb,Fat', hi: 'प्रति पंक्ति एक भोजन दर्ज करें। प्रारूप: নাম,इकाई,कैलोरी,प्रोटीन,कार्ब,वसा', bn: 'प्रति লাইনে একটি করে খাবার লিখুন। ফরম্যাট: নাম, ইউনিট, ক্যালোরি, প্রোটিন, কার্ব, ফ্যাট' },
                 bulkImportPlaceholder: { en: 'Cooked Rice,g,130,2.7,28,0.3\nMilk,ml,42,3.4,5,1', hi: 'पका हुआ चावल,g,130,2.7,28,0.3\nदूध,ml,42,3.4,5,1', bn: 'রান্না করা ভাত,g,130,2.7,28,0.3\nদুধ,ml,42,3.4,5,1' },
-                importFoodsButton: { en: 'Import Foods', hi: 'खाद्य पदार्थ आयात करें', bn: 'খাবার ইম্পোর্ট করুন' },
+                importFoodsButton: { en: 'Import Foods', hi: 'खाद्य पदार्थ आयात करें', bn: 'खাবার ইম্পোর্ট করুন' },
                 statusLabel: { en: 'Status', hi: 'स्थिति', bn: 'স্ট্যাটাস' },
                 intakeLabel: { en: 'Intake', hi: 'सेवन', bn: 'গ্রহণ' },
                 targetLabel: { en: 'Target', hi: 'लक्ष्य', bn: 'লক্ষ্য' },
@@ -394,9 +461,10 @@
                 importConfirm: { en: 'This will overwrite all current data?', hi: 'यह सभी मौजूदा डेटा को अधिलेखित कर देगा?', bn: 'এটি সমস্ত বর্তমান ডেটা ওভাররাইট করবে?' },
                 viewMicrosButton: { en: 'Micronutrients', hi: 'Micronutrients', bn: 'Micronutrients' },
                 portionsTitle: { en: 'My Portions', hi: 'मेरे हिस्से', bn: 'আমার অংশ' },
-                microsTitle: { en: 'Micronutrient Details', hi: 'Micronutrient विवरण', bn: 'Micronutrient বিবরণ' },
+                microsTitle: { en: 'Monthly Micronutrient Details', hi: 'Micronutrient विवरण', bn: 'Micronutrient বিবরণ' },
                 hydrationTitle: { en: "Today's Hydration", hi: 'आज का हाइड्रेशन', bn: 'আজকের হাইড্রেশন' },
             };
+
 
             const setLanguage = (lang) => {
                 currentLang = lang;
@@ -413,6 +481,8 @@
                     }
                 });
             };
+
+
 
 
             const getTodayKey = () => `dailyLog_${new Date().toISOString().split('T')[0]}`;
@@ -434,30 +504,46 @@
                 });
             };
 
+
             const saveData = () => {
-                localStorage.setItem('foodDatabase', JSON.stringify(foodDatabase));
-                localStorage.setItem(getTodayKey(), JSON.stringify(dailyLog));
-                localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
-                localStorage.setItem('adaptiveThemeEnabled', JSON.stringify(adaptiveThemeEnabled));
-                localStorage.setItem('unlockedAchievements', JSON.stringify(unlockedAchievements));
-                localStorage.setItem('language', currentLang);
-                localStorage.setItem('customPortions', JSON.stringify(customPortions));
-                localStorage.setItem(`waterIntake_${getTodayKey()}`, waterIntake);
-                localStorage.setItem('weightLog', JSON.stringify(weightLog));
+                try {
+                    localStorage.setItem('foodDatabase', JSON.stringify(foodDatabase));
+                    localStorage.setItem(getTodayKey(), JSON.stringify(dailyLog));
+                    localStorage.setItem('dailyGoals', JSON.stringify(dailyGoals));
+                    localStorage.setItem('customMicrosGoals', JSON.stringify(customMicrosGoals));
+                    localStorage.setItem('adaptiveThemeEnabled', JSON.stringify(adaptiveThemeEnabled));
+                    localStorage.setItem('unlockedAchievements', JSON.stringify(unlockedAchievements));
+                    localStorage.setItem('language', currentLang);
+                    localStorage.setItem('customPortions', JSON.stringify(customPortions));
+                    localStorage.setItem(`waterIntake_${getTodayKey()}`, waterIntake);
+                    localStorage.setItem('weightLog', JSON.stringify(weightLog));
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        showAlert('Storage Error: Your browser storage is full. Please export your data and clear some space.');
+                    } else {
+                        showAlert(`An unexpected error occurred: ${e.message}`);
+                    }
+                }
             };
             const loadData = () => {
-                foodDatabase = JSON.parse(localStorage.getItem('foodDatabase') || '[]');
-                dailyLog = JSON.parse(localStorage.getItem(getTodayKey()) || '[]');
-                dailyGoals = JSON.parse(localStorage.getItem('dailyGoals')) || { calories: 2300, protein: 170, carbs: 230, fat: 75 };
-                adaptiveThemeEnabled = JSON.parse(localStorage.getItem('adaptiveThemeEnabled') ?? 'true');
-                unlockedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
-                currentLang = localStorage.getItem('language') || 'en';
-                customPortions = JSON.parse(localStorage.getItem('customPortions') || '{}');
-                waterIntake = parseInt(localStorage.getItem(`waterIntake_${getTodayKey()}`) || '0');
-                weightLog = JSON.parse(localStorage.getItem('weightLog') || '{}');
-                adaptiveThemeToggle.checked = adaptiveThemeEnabled;
-                languageSelect.value = currentLang;
+                try {
+                    foodDatabase = JSON.parse(localStorage.getItem('foodDatabase') || '[]');
+                    dailyLog = JSON.parse(localStorage.getItem(getTodayKey()) || '[]');
+                    dailyGoals = JSON.parse(localStorage.getItem('dailyGoals')) || { calories: 2300, protein: 170, carbs: 230, fat: 75 };
+                    customMicrosGoals = JSON.parse(localStorage.getItem('customMicrosGoals') || '{}');
+                    adaptiveThemeEnabled = JSON.parse(localStorage.getItem('adaptiveThemeEnabled') ?? 'true');
+                    unlockedAchievements = JSON.parse(localStorage.getItem('unlockedAchievements') || '[]');
+                    currentLang = localStorage.getItem('language') || 'en';
+                    customPortions = JSON.parse(localStorage.getItem('customPortions') || '{}');
+                    waterIntake = parseInt(localStorage.getItem(`waterIntake_${getTodayKey()}`) || '0');
+                    weightLog = JSON.parse(localStorage.getItem('weightLog') || '{}');
+                    adaptiveThemeToggle.checked = adaptiveThemeEnabled;
+                    languageSelect.value = currentLang;
+                } catch(e) {
+                    showAlert(`Error loading data: ${e.message}. Your data might be corrupted.`);
+                }
             };
+
 
             const getDailyPerformanceScore = (calories, goal) => {
                 if (!calories || goal <= 0) return 0;
@@ -468,6 +554,7 @@
                 if (ratio > 1.2) return -2;
                 return 0;
             };
+
 
             const calculateHealthScore = () => {
                 let totalScore = 0;
@@ -485,6 +572,7 @@
                 }
                 return totalScore / 45;
             };
+
 
             const applyTheme = () => {
                 let theme;
@@ -506,8 +594,12 @@
             const calculateDailyTotals = () => {
                 let totals = { calories: 0, protein: 0, carbs: 0, fat: 0 };
                 Object.keys(MICRONUTRIENTS).forEach(m => totals[m] = 0);
+                Object.keys(MACRO_BREAKDOWNS).forEach(macro => {
+                     Object.keys(MACRO_BREAKDOWNS[macro].fields).forEach(field => {
+                         totals[field] = 0;
+                     });
+                });
 
-                // Add from food log
                 dailyLog.forEach(item => {
                     const food = foodDatabase[item.foodIndex];
                     if (food) {
@@ -515,6 +607,7 @@
                         Object.keys(totals).forEach(k => {
                             if (food[k] !== undefined) totals[k] += food[k] * mult;
                             if (food.micros && food.micros[k] !== undefined) totals[k] += food.micros[k] * mult;
+                            if (food.breakdown && food.breakdown[k] !== undefined) totals[k] += food.breakdown[k] * mult;
                         });
                     }
                 });
@@ -526,6 +619,7 @@
                 if (hours < 12) greetingEl.textContent = translations.greetingGoodMorning[currentLang];
                 else if (hours < 18) greetingEl.textContent = translations.greetingGoodAfternoon[currentLang];
                 else greetingEl.textContent = translations.greetingGoodEvening[currentLang];
+
 
                 const consecutiveDays = countConsecutiveLogDays();
                 if(consecutiveDays > 1) {
@@ -539,11 +633,12 @@
                 circularTotalsDisplay.innerHTML = '';
                 const totals = calculateDailyTotals();
                 const macroInfo = {
-                    calories: { color: '#f97316', light: '#ffedd5', darkText: '#c2410c', name: 'Calories' },
-                    protein:  { color: '#ef4444', light: '#fee2e2', darkText: '#b91c1c', name: 'Protein' },
-                    carbs:    { color: '#0ea5e9', light: '#e0f2fe', darkText: '#0369a1', name: 'Carbs' },
-                    fat:      { color: '#facc15', light: '#fef9c3', darkText: '#a16207', name: 'Fat' }
+                    calories: { color: '#f97316', light: '#ffedd5', darkText: '#c2410c', name: 'Calories', clickable: false },
+                    protein:  { color: '#ef4444', light: '#fee2e2', darkText: '#b91c1c', name: 'Protein', clickable: true },
+                    carbs:    { color: '#0ea5e9', light: '#e0f2fe', darkText: '#0369a1', name: 'Carbs', clickable: true },
+                    fat:      { color: '#facc15', light: '#fef9c3', darkText: '#a16207', name: 'Fat', clickable: true }
                 };
+
 
                 Object.keys(macroInfo).forEach(macro => {
                     const config = macroInfo[macro];
@@ -558,20 +653,69 @@
                     const circumference = 2 * Math.PI * innerRadius;
                     const offset = circumference - (percent / 100) * circumference;
 
-                    const circularBarHTML = `
-                        <div class="flex flex-col items-center progress-circle-container">
-                            <svg class="progress-circle" width="120" height="120" viewBox="0 0 100 100">
-                                <circle cx="50" cy="50" r="${innerRadius}" stroke="${config.light}" stroke-width="${strokeWidth}" fill="transparent"></circle>
-                                <circle class="progress-circle-bar" cx="50" cy="50" r="${innerRadius}" stroke="${config.color}" stroke-width="${strokeWidth}" fill="transparent" stroke-linecap="round"
-                                    stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
-                                <text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="16" fill="${config.darkText}" font-weight="600">${value.toFixed(0)}${unit}</text>
-                            </svg>
-                            <p class="text-sm font-semibold capitalize mt-2" style="color: ${config.darkText};">${config.name}</p>
-                        </div>
+                    const container = document.createElement('div');
+                    container.className = 'flex flex-col items-center progress-circle-container';
+                    if(config.clickable) {
+                        container.dataset.macro = macro;
+                        container.addEventListener('click', handleMacroRingClick);
+                    }
+
+                    container.innerHTML = `
+                        <svg class="progress-circle" width="120" height="120" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="${innerRadius}" stroke="${config.light}" stroke-width="${strokeWidth}" fill="transparent"></circle>
+                            <circle class="progress-circle-bar" cx="50" cy="50" r="${innerRadius}" stroke="${config.color}" stroke-width="${strokeWidth}" fill="transparent" stroke-linecap="round"
+                                stroke-dasharray="${circumference}" stroke-dashoffset="${offset}"></circle>
+                            <text x="50%" y="50%" text-anchor="middle" dy=".3em" font-size="16" fill="${config.darkText}" font-weight="600">${value.toFixed(0)}${unit}</text>
+                        </svg>
+                        <p class="text-sm font-semibold capitalize mt-2" style="color: ${config.darkText};">${config.name}</p>
                     `;
-                    circularTotalsDisplay.innerHTML += circularBarHTML;
+                    circularTotalsDisplay.appendChild(container);
                 });
             };
+            
+            const handleMacroRingClick = (e) => {
+                const macro = e.currentTarget.dataset.macro;
+                const dailyTotals = calculateDailyTotals();
+                const breakdown = MACRO_BREAKDOWNS[macro];
+                if (!breakdown) return;
+
+
+                const labels = [];
+                const data = [];
+                let totalBreakdownValue = 0;
+
+
+                Object.keys(breakdown.fields).forEach(field => {
+                    const value = dailyTotals[field] || 0;
+                    if (value > 0) {
+                        labels.push(breakdown.fields[field]);
+                        data.push(value.toFixed(1));
+                        totalBreakdownValue += value;
+                    }
+                });
+
+
+                const remaining = dailyTotals[macro] - totalBreakdownValue;
+                if (remaining > 0.1) {
+                    labels.push('Unspecified');
+                    data.push(remaining.toFixed(1));
+                }
+                
+                if (data.length === 0) {
+                     showAlert(`No detailed breakdown data logged for ${macro} today.`);
+                     return;
+                }
+
+
+                el('pie-chart-title').textContent = `Today's ${breakdown.label} Breakdown`;
+                if(pieChart) pieChart.destroy();
+                pieChart = new Chart(el('pie-chart-canvas'), {
+                    type: 'pie',
+                    data: { labels, datasets: [{ data, backgroundColor: ['#ef4444', '#f97316', '#facc15', '#0ea5e9', '#4ade80', '#a855f7'] }] },
+                });
+                openModal(modals.pie);
+            };
+
 
             const checkAchievements = () => {
                 const newlyUnlocked = [];
@@ -582,7 +726,7 @@
                     const totals = calculateDailyTotals();
                     const perfect = ['calories', 'protein', 'carbs', 'fat'].every(m => {
                         const goal = dailyGoals[m];
-                        return goal > 0 && totals[m] >= goal;
+                        return goal > 0 && totals[m] >= goal * 0.9 && totals[m] <= goal * 1.1;
                     });
                     if(perfect) newlyUnlocked.push('perfectDay');
                 }
@@ -635,24 +779,22 @@
                     const key = `dailyLog_${date.toISOString().split('T')[0]}`;
                     if (localStorage.getItem(key) && JSON.parse(localStorage.getItem(key)).length > 0) {
                         count++;
-                    } else {
+                    } else if (i > 0) { // allow today to be empty without breaking streak
                         break;
                     }
                 }
                 return count;
             };
 
-            const renderFoodDatabase = () => {
-                foodDatabaseList.innerHTML = ''; foodSelect.innerHTML = `<option value="">${translations.selectFoodOption[currentLang]}</option>`;
-                if (foodDatabase.length === 0) { foodDatabaseList.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400">No foods saved yet.</p>`; return; }
+            const populateFoodSelect = () => {
+                foodSelect.innerHTML = `<option value="">${translations.selectFoodOption[currentLang]}</option>`;
                 foodDatabase.forEach((food, index) => {
-                    const itemEl = document.createElement('div');
-                    itemEl.className = 'flex justify-between items-center p-2 bg-gray-100 dark:bg-slate-700/50 rounded-md text-sm';
-                    itemEl.innerHTML = `<div><p class="font-semibold">${food.name}</p><p class="text-xs">${food.calories} kcal / 100${food.unit}</p></div><div><button data-index="${index}" class="btn btn-secondary edit-food-btn !p-2 !px-3 mr-2">Edit</button><button data-index="${index}" class="btn btn-danger delete-food-btn !p-2 !px-3">X</button></div>`;
-                    foodDatabaseList.appendChild(itemEl);
-                    const optionEl = document.createElement('option');
-                    optionEl.value = index; optionEl.textContent = `${food.name} (per 100${food.unit})`;
-                    foodSelect.appendChild(optionEl);
+                    if (food && !food.deleted) {
+                        const optionEl = document.createElement('option');
+                        optionEl.value = index; 
+                        optionEl.textContent = `${food.name} (per 100${food.unit})`;
+                        foodSelect.appendChild(optionEl);
+                    }
                 });
             };
 
@@ -660,15 +802,26 @@
                 dailyLogList.innerHTML = '';
                 if (dailyLog.length === 0) { dailyLogList.innerHTML = `<p class="text-center mt-4 text-sm text-gray-500 dark:text-gray-400">No food logged for today.</p>`; return; }
                 dailyLog.forEach((logItem, index) => {
-                    const food = foodDatabase[logItem.foodIndex]; if (!food) return;
+                    const food = foodDatabase[logItem.foodIndex]; 
+                    if (!food) return; // Food might have been deleted but history kept
                     const mult = logItem.amount / 100;
                     const logEl = document.createElement('div');
                     logEl.className = 'grid grid-cols-8 gap-2 items-center text-sm p-2 rounded-md hover:bg-gray-100 dark:hover:bg-slate-700/50';
-                    logEl.innerHTML = `<div class="col-span-2 font-semibold">${food.name}</div><div class="text-gray-600 dark:text-gray-400">${logItem.amount.toFixed(0)}${food.unit}</div><div class="font-medium">${(food.calories * mult).toFixed(0)} kcal</div><div class="text-blue-600 dark:text-blue-400">${(food.protein * mult).toFixed(1)}g P</div><div class="text-emerald-600 dark:text-emerald-400">${(food.carbs * mult).toFixed(1)}g C</div><div class="text-amber-600 dark:text-amber-400">${(food.fat * mult).toFixed(1)}g F</div><div class="text-right"><button data-index="${index}" class="btn btn-danger delete-log-btn text-xs">Del</button></div>`;
+                    logEl.innerHTML = `<div class="col-span-2 font-semibold">${food.name}</div><div class="text-gray-600 dark:text-gray-400">${logItem.amount.toFixed(0)}${logItem.unit}</div><div class="font-medium">${(food.calories * mult).toFixed(0)} kcal</div><div class="text-blue-600 dark:text-blue-400">${(food.protein * mult).toFixed(1)}g P</div><div class="text-emerald-600 dark:text-emerald-400">${(food.carbs * mult).toFixed(1)}g C</div><div class="text-amber-600 dark:text-amber-400">${(food.fat * mult).toFixed(1)}g F</div><div class="text-right"><button data-index="${index}" class="btn btn-danger delete-log-btn text-xs">Del</button></div>`;
                     dailyLogList.appendChild(logEl);
                 });
             };
-            const renderGoals = () => Object.keys(dailyGoals).forEach(g => el(`goal-${g}`).value = dailyGoals[g] || '');
+            const renderGoals = () => {
+                Object.keys(dailyGoals).forEach(g => el(`goal-${g}`).value = dailyGoals[g] || '');
+                microsGoalsContainer.innerHTML = '';
+                Object.keys(MICRONUTRIENTS).forEach(micro => {
+                    microsGoalsContainer.innerHTML += `<div><label for="goal-${micro}" class="block text-sm font-medium capitalize">${micro.replace('vitamin', 'Vit ')} (${MICRONUTRIENTS[micro]})</label><input type="number" id="goal-${micro}" data-micro="${micro}" min="0" class="micros-goal-input" placeholder="${RDAs[micro] * 30}"></div>`;
+                });
+                Object.keys(customMicrosGoals).forEach(micro => {
+                    const input = el(`goal-${micro}`);
+                    if (input) input.value = customMicrosGoals[micro];
+                });
+            };
             const getMonthlyData = (date) => {
                 const prefix = `dailyLog_${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-`;
                 let data = {};
@@ -679,15 +832,11 @@
                         const dayLog = JSON.parse(localStorage.getItem(key));
                         data[day] = dayLog.reduce((acc, item) => {
                            const food = foodDatabase[item.foodIndex];
-                            if (food) {
+                            if (food) { // Check if food exists (wasn't deleted)
                                 const mult = item.amount / 100;
-                                ['calories', 'protein', 'carbs', 'fat'].forEach(k => { if(food[k] !== undefined) acc[k] += food[k] * mult });
-                                if (food.micros) {
-                                    Object.keys(food.micros).forEach(m => {
-                                        if (acc[m] === undefined) acc[m] = 0;
-                                        acc[m] += food.micros[m] * mult;
-                                    });
-                                }
+                                ['calories', 'protein', 'carbs', 'fat'].forEach(k => { if(food[k] !== undefined) acc[k] = (acc[k] || 0) + food[k] * mult });
+                                if (food.micros) Object.keys(food.micros).forEach(m => { acc[m] = (acc[m] || 0) + food.micros[m] * mult; });
+                                if (food.breakdown) Object.keys(food.breakdown).forEach(b => { acc[b] = (acc[b] || 0) + food.breakdown[b] * mult; });
                             }
                             return acc;
                         }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
@@ -696,14 +845,32 @@
                 return data;
             };
             const renderMonthlyOverview = (date) => {
-                const monthlyData = getMonthlyData(date);
                 const monthName = date.toLocaleString('default', { month: 'long', year: 'numeric' });
                 monthlyChartTitle.textContent = `${monthName} Totals`; 
                 heatmapTitle.textContent = `${monthName} Calorie Map`;
                 
-                const monthlyTotals = Object.values(monthlyData).reduce((acc, day) => { Object.keys(acc).forEach(k => { if(acc[k] !== undefined) acc[k] += day[k]}); return acc; }, { protein: 0, carbs: 0, fat: 0 });
                 if (monthlyChart) monthlyChart.destroy();
-                monthlyChart = new Chart(monthlyChartEl, { type: 'bar', data: { labels: ['Protein (g)', 'Carbs (g)', 'Fat (g)'], datasets: [{ label: 'Total Intake', data: [monthlyTotals.protein, monthlyTotals.carbs, monthlyTotals.fat], backgroundColor: ['#ef4444', '#0ea5e9', '#facc15'] }] }, options: { scales: { y: { beginAtZero: true } } } });
+                
+                const monthlyData = getMonthlyData(date);
+                const monthlyTotals = Object.values(monthlyData).reduce((acc, dayData) => {
+                    Object.keys(dayData).forEach(key => {
+                        acc[key] = (acc[key] || 0) + dayData[key];
+                    });
+                    return acc;
+                }, {});
+
+                monthlyChart = new Chart(monthlyChartEl, { 
+                    type: 'bar', 
+                    data: { 
+                        labels: ['Protein (g)', 'Carbs (g)', 'Fat (g)'], 
+                        datasets: [{ 
+                            label: 'Total Intake', 
+                            data: [monthlyTotals.protein || 0, monthlyTotals.carbs || 0, monthlyTotals.fat || 0], 
+                            backgroundColor: ['#ef4444', '#0ea5e9', '#facc15'] 
+                        }] 
+                    }, 
+                    options: { scales: { y: { beginAtZero: true } } } 
+                });
                 
                 heatmapEl.innerHTML = '';
                 const year = date.getFullYear(), month = date.getMonth();
@@ -736,6 +903,7 @@
                         const variance = intake - dailyGoals.calories;
                         el('heatmap-detail-variance').textContent = `${variance >= 0 ? '+' : ''}${variance.toFixed(0)} kcal`;
 
+
                         const weight = getMostRecentWeight(clickedDate);
                         const weightContainer = el('heatmap-detail-weight-container');
                         if(weight) {
@@ -750,46 +918,115 @@
                 }
                 heatmapLegendEl.innerHTML = `<div class="legend-item"><div class="legend-color-box" style="background-color: ${colors.on};"></div> On Target</div><div class="legend-item"><div class="legend-color-box" style="background-color: ${colors.over};"></div> Over Target</div><div class="legend-item"><div class="legend-color-box" style="background-color: ${colors.under};"></div> Under Target</div><div class="legend-item"><div class="legend-color-box" style="background-color: ${colors.none};"></div> No Data</div>`;
 
+
                 nextMonthBtn.disabled = isCurrentMonth;
                 renderWeightChart();
             };
+            
+            const renderDetailedMonthlyChart = () => {
+                const monthName = currentlyViewedDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+                el('monthly-chart-detail-title').textContent = `Detailed Breakdown for ${monthName}`;
+                
+                const monthlyData = getMonthlyData(currentlyViewedDate);
+                const monthlyTotals = Object.values(monthlyData).reduce((acc, dayData) => {
+                    Object.keys(dayData).forEach(key => { acc[key] = (acc[key] || 0) + dayData[key]; });
+                    return acc;
+                }, {});
+
+                const chartLabels = ['Protein', 'Carbs', 'Fat'];
+                const datasets = {};
+                const breakdownColors = {
+                    fiber: '#22c55e', natural_sugars: '#a3e635', added_sugars: '#ef4444', 
+                    saturated: '#f97316', polyunsaturated: '#0ea5e9', monounsaturated: '#eab308', trans: '#9333ea', 
+                    essential: '#f43f5e', non_essential: '#ec4899', 
+                    unspecified_protein: '#fda4af', unspecified_carbs: '#7dd3fc', unspecified_fat: '#fde047'
+                };
+
+                chartLabels.forEach((macroLabel, index) => {
+                    const macro = macroLabel.toLowerCase();
+                    let totalBreakdown = 0;
+                    if (MACRO_BREAKDOWNS[macro]) {
+                        Object.keys(MACRO_BREAKDOWNS[macro].fields).forEach(field => {
+                            if (!datasets[field]) {
+                                datasets[field] = {
+                                    label: MACRO_BREAKDOWNS[macro].fields[field],
+                                    data: new Array(chartLabels.length).fill(0),
+                                    backgroundColor: breakdownColors[field]
+                                };
+                            }
+                            const value = monthlyTotals[field] || 0;
+                            datasets[field].data[index] = value;
+                            totalBreakdown += value;
+                        });
+                    }
+                    const unspecified = (monthlyTotals[macro] || 0) - totalBreakdown;
+                    if (unspecified > 0.1) {
+                        const unspecifiedKey = `unspecified_${macro}`;
+                        if (!datasets[unspecifiedKey]) {
+                            datasets[unspecifiedKey] = {
+                                label: `Unspecified ${macroLabel}`,
+                                data: new Array(chartLabels.length).fill(0),
+                                backgroundColor: breakdownColors[unspecifiedKey]
+                            };
+                        }
+                        datasets[unspecifiedKey].data[index] = unspecified;
+                    }
+                });
+                
+                if (monthlyDetailChart) monthlyDetailChart.destroy();
+                monthlyDetailChart = new Chart(el('monthly-chart-detail-canvas'), {
+                    type: 'bar',
+                    data: { labels: chartLabels, datasets: Object.values(datasets) },
+                    options: { 
+                        plugins: { legend: { position: 'bottom' } },
+                        scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } 
+                    }
+                });
+
+                openModal(modals.monthlyChartDetail);
+            };
+
 
             const renderMicrosModal = () => {
                 const monthlyData = getMonthlyData(currentlyViewedDate);
                 const daysInMonth = new Date(currentlyViewedDate.getFullYear(), currentlyViewedDate.getMonth() + 1, 0).getDate();
-
                 const monthlyTotals = {};
                 Object.keys(MICRONUTRIENTS).forEach(m => monthlyTotals[m] = 0);
+                Object.values(monthlyData).forEach(dayData => Object.keys(MICRONUTRIENTS).forEach(m => { if (dayData[m]) monthlyTotals[m] += dayData[m]; }));
                 
-                Object.values(monthlyData).forEach(dayData => {
-                    Object.keys(MICRONUTRIENTS).forEach(m => {
-                        if (dayData[m]) monthlyTotals[m] += dayData[m];
-                    });
-                });
-
                 const container = el('micros-modal-content');
                 container.innerHTML = '';
                 
+                let onTarget = [], low = [], high = [], noData = [];
+                Object.keys(MICRONUTRIENTS).forEach(micro => {
+                    const value = monthlyTotals[micro] || 0;
+                    const goal = customMicrosGoals[micro] || (RDAs[micro] || 1) * daysInMonth;
+                    const ratio = value / goal;
+                    if (value === 0) noData.push(micro);
+                    else if (ratio >= 0.85 && ratio <= 1.5) onTarget.push(micro);
+                    else if (ratio < 0.85) low.push(micro);
+                    else high.push(micro);
+                });
+
+                el('micros-summary-report').innerHTML = `
+                    <p><strong>Great job!</strong> You're on target with: <span class="text-green-600">${onTarget.join(', ') || 'None'}</span>.</p>
+                    <p><strong>Consider focusing on:</strong> You're a bit low on <span class="text-yellow-600">${low.join(', ') || 'None'}</span>.</p>
+                    <p><strong>For review:</strong> Your intake for <span class="text-red-600">${high.join(', ') || 'None'}</span> is high.</p>
+                `;
+
                 const createSection = (title, keys) => {
                     container.innerHTML += `<h3 class="text-lg font-semibold col-span-1 sm:col-span-2">${title}</h3>`;
                     keys.forEach(micro => {
                         const value = monthlyTotals[micro] || 0;
-                        const rda = (RDAs[micro] || 1) * daysInMonth;
-                        const percent = Math.min(100, (value / rda) * 100);
+                        const goal = customMicrosGoals[micro] || (RDAs[micro] || 1) * daysInMonth;
+                        const percent = Math.min(100, (value / goal) * 100);
                         const unit = MICRONUTRIENTS[micro];
                         
                         const microEl = document.createElement('div');
-                        microEl.innerHTML = `
-                            <div class="flex justify-between items-baseline mb-1">
-                                <span class="font-semibold capitalize">${micro.replace('vitamin', 'Vit ')}</span>
-                                <span class="text-sm" style="color:var(--text-color-secondary)">${value.toFixed(1)}${unit} / ${rda.toFixed(0)}${unit}</span>
-                            </div>
-                            <div class="progress-container"><div class="progress-bar" style="width: ${percent}%; background-color: var(--primary-color);"></div></div>
-                        `;
+                        microEl.innerHTML = `<div class="flex justify-between items-baseline mb-1"><span class="font-semibold capitalize">${micro.replace('vitamin', 'Vit ')}</span><span class="text-sm" style="color:var(--text-color-secondary)">${value.toFixed(1)}${unit} / ${goal.toFixed(0)}${unit}</span></div><div class="progress-container"><div class="progress-bar" style="width: ${percent}%; background-color: var(--primary-color);"></div></div>`;
                         container.appendChild(microEl);
                     });
                 };
-
                 createSection('Vitamins', Object.keys(MICRONUTRIENTS).filter(k => k.startsWith('vitamin')));
                 createSection('Minerals', Object.keys(MICRONUTRIENTS).filter(k => !k.startsWith('vitamin') && k !== 'omega3'));
                 createSection('Fats', ['omega3']);
@@ -797,27 +1034,22 @@
             
             const playPlopSound = () => {
                 if (!audioCtx) {
-                    try {
-                        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                    } catch(e) {
-                        console.error("Web Audio API is not supported in this browser");
-                        return;
-                    }
+                    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } 
+                    catch(e) { console.error("Web Audio API is not supported in this browser"); return; }
                 }
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
-                
                 oscillator.type = 'sine';
                 oscillator.frequency.setValueAtTime(200, audioCtx.currentTime);
                 oscillator.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
                 gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-                
                 oscillator.start(audioCtx.currentTime);
                 oscillator.stop(audioCtx.currentTime + 0.2);
             };
+
 
             const renderWaterTracker = () => {
                 waterTracker.innerHTML = '';
@@ -854,6 +1086,7 @@
                 });
             };
 
+
             const getMostRecentWeight = (targetDate) => {
                 const sortedKeys = Object.keys(weightLog).sort().reverse();
                 const targetKey = targetDate.toISOString().split('T')[0];
@@ -865,18 +1098,40 @@
                 return null;
             };
 
+
             const updateUI = () => {
                 setLanguage(currentLang);
                 applyTheme();
                 renderGreetingAndInsight();
                 renderCircularTotals();
-                renderFoodDatabase();
+                populateFoodSelect();
                 renderDailyLog();
                 renderGoals();
                 renderMonthlyOverview(currentlyViewedDate);
                 renderAchievements();
                 renderWaterTracker();
             };
+            
+            const renderManageFoodList = (searchTerm = '') => {
+                const container = el('manage-food-list');
+                container.innerHTML = '';
+                const filteredFoods = foodDatabase
+                    .map((food, index) => ({ food, index }))
+                    .filter(({ food }) => food && !food.deleted && food.name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+                if (filteredFoods.length === 0) {
+                    container.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400 text-center">No foods found.</p>`;
+                    return;
+                }
+
+                filteredFoods.forEach(({ food, index }) => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'flex justify-between items-center p-2 bg-gray-100 dark:bg-slate-700/50 rounded-md text-sm';
+                    itemEl.innerHTML = `<div><p class="font-semibold">${food.name}</p><p class="text-xs">${food.calories} kcal / 100${food.unit}</p></div><div><button data-index="${index}" class="btn btn-warning edit-food-btn !p-2 !px-3 mr-2">Edit</button><button data-index="${index}" class="btn btn-danger delete-food-btn !p-2 !px-3">X</button></div>`;
+                    container.appendChild(itemEl);
+                });
+            };
+
 
             // --- EVENT LISTENERS ---
             fab.addEventListener('click', () => {
@@ -884,6 +1139,8 @@
                 el('add-food-form').reset();
                 el('micros-inputs-container').innerHTML = '';
                 el('micros-inputs-container').classList.add('hidden');
+                el('breakdown-inputs-container').innerHTML = '';
+                el('breakdown-inputs-container').classList.add('hidden');
                 el('new-food-portions-container').innerHTML = '';
                 currentFoodPortions = {};
                 openModal(modals.choice)
@@ -898,75 +1155,97 @@
             
             languageSelect.addEventListener('change', (e) => { setLanguage(e.target.value); saveData(); updateUI(); });
 
+
             el('add-food-form').addEventListener('submit', (e) => { 
-                e.preventDefault(); 
+                e.preventDefault();
+                const calories = parseFloat(el('calories').value);
+                const protein = parseFloat(el('protein').value);
+                const carbs = parseFloat(el('carbs').value);
+                const fat = parseFloat(el('fat').value);
+
+                if (calories < 0 || protein < 0 || carbs < 0 || fat < 0) {
+                    return showAlert('Nutrient values cannot be negative.');
+                }
+                
                 const foodData = { 
                     name: el('food-name').value, unit: el('food-unit').value, 
-                    calories: parseFloat(el('calories').value) || 0, protein: parseFloat(el('protein').value) || 0, 
-                    carbs: parseFloat(el('carbs').value) || 0, fat: parseFloat(el('fat').value) || 0,
-                    portions: currentFoodPortions,
-                    micros: {}
+                    calories: calories || 0, protein: protein || 0, 
+                    carbs: carbs || 0, fat: fat || 0,
+                    portions: currentFoodPortions, micros: {}, breakdown: {},
+                    deleted: false
                 };
 
-                document.querySelectorAll('#micros-inputs-container input').forEach(input => {
-                    const value = parseFloat(input.value);
-                    if(value > 0) foodData.micros[input.dataset.micro] = value;
+                document.querySelectorAll('#micros-inputs-container input').forEach(input => { 
+                    const val = parseFloat(input.value);
+                    foodData.micros[input.dataset.micro] = val > 0 ? val : 0; 
+                });
+                document.querySelectorAll('#breakdown-inputs-container input').forEach(input => {
+                    const val = parseFloat(input.value);
+                    foodData.breakdown[input.dataset.field] = val > 0 ? val : 0;
                 });
                 
-                if(editingFoodIndex !== null) {
-                    foodDatabase[editingFoodIndex] = foodData;
-                } else {
-                    foodDatabase.push(foodData);
-                }
+                if(editingFoodIndex !== null) { foodDatabase[editingFoodIndex] = foodData; } 
+                else { foodDatabase.push(foodData); }
                 
                 e.target.reset(); 
                 saveData(); 
-                updateUI(); 
+                updateUI();
+                if (modals.manageFoods.classList.contains('visible')) {
+                    renderManageFoodList(el('food-db-search').value);
+                }
                 closeModal(modals.single); 
                 showAlert(translations.foodAddedAlert[currentLang]); 
                 editingFoodIndex = null;
             });
-            el('bulk-import-btn').addEventListener('click', () => { const lines = el('bulk-import-data').value.trim().split('\n'); let added = 0, invalid = []; lines.forEach((line, i) => { if (!line.trim()) return; const parts = line.split(','); if (parts.length === 6) { const [name, unit, cal, prot, carb, fat] = parts.map(p => p.trim()); if (name && ['g', 'ml'].includes(unit.toLowerCase()) && !isNaN(parseFloat(cal)) && !isNaN(parseFloat(prot)) && !isNaN(parseFloat(carb)) && !isNaN(parseFloat(fat))) { foodDatabase.push({ name, unit: unit.toLowerCase(), calories: parseFloat(cal), protein: parseFloat(prot), carbs: parseFloat(carb), fat: parseFloat(fat), portions: {}, micros: {} }); added++; } else { invalid.push(i + 1); } } else { invalid.push(i + 1); } }); if (added > 0) { el('bulk-import-data').value = ''; saveData(); updateUI(); closeModal(modals.bulk); let msg = `${added} food(s) imported.`; if (invalid.length > 0) msg += `\nFailed lines: ${invalid.join(', ')}.`; showAlert(msg); } else { showAlert('Import failed. Check format.'); } });
-            foodDatabaseList.addEventListener('click', (e) => { 
+            el('bulk-import-btn').addEventListener('click', () => { const lines = el('bulk-import-data').value.trim().split('\n'); let added = 0, invalid = []; lines.forEach((line, i) => { if (!line.trim()) return; const parts = line.split(','); if (parts.length === 6) { const [name, unit, cal, prot, carb, fat] = parts.map(p => p.trim()); if (name && ['g', 'ml'].includes(unit.toLowerCase()) && !isNaN(parseFloat(cal)) && parseFloat(cal) >= 0 && !isNaN(parseFloat(prot))  && parseFloat(prot) >= 0 && !isNaN(parseFloat(carb)) && parseFloat(carb) >= 0 && !isNaN(parseFloat(fat)) && parseFloat(fat) >= 0) { foodDatabase.push({ name, unit: unit.toLowerCase(), calories: parseFloat(cal), protein: parseFloat(prot), carbs: parseFloat(carb), fat: parseFloat(fat), portions: {}, micros: {}, breakdown: {}, deleted: false }); added++; } else { invalid.push(i + 1); } } else { invalid.push(i + 1); } }); if (added > 0) { el('bulk-import-data').value = ''; saveData(); updateUI(); closeModal(modals.bulk); let msg = `${added} food(s) imported.`; if (invalid.length > 0) msg += `\nFailed lines: ${invalid.join(', ')}.`; showAlert(msg); } else { showAlert('Import failed. Check format and ensure no negative values.'); } });
+            
+            manageFoodsBtn.addEventListener('click', () => {
+                renderManageFoodList();
+                openModal(modals.manageFoods);
+            });
+
+            el('food-db-search').addEventListener('input', (e) => renderManageFoodList(e.target.value));
+
+            el('manage-food-list').addEventListener('click', async (e) => {
                 const button = e.target.closest('button');
                 if(!button) return;
-
                 const index = parseInt(button.dataset.index);
 
                 if (button.classList.contains('delete-food-btn')) {
-                    foodDatabase.splice(index, 1); 
-                    dailyLog = dailyLog.filter(l => l.foodIndex !== index).map(l => { if (l.foodIndex > index) l.foodIndex--; return l; }); 
-                    saveData(); 
-                    updateUI(); 
+                    const foodName = foodDatabase[index].name;
+                    if (await showAlert(`Delete "${foodName}"?\n\nThis will remove it from future logging, but your past records for this food will be kept.`, [{ text: 'Cancel', resolvesTo: false }, { text: 'Delete', class: 'btn-danger', resolvesTo: true }])) {
+                        foodDatabase[index].deleted = true;
+                        saveData();
+                        updateUI();
+                        renderManageFoodList(el('food-db-search').value);
+                    }
                 } else if (button.classList.contains('edit-food-btn')) {
                     editingFoodIndex = index;
-                    const foodToEdit = foodDatabase[index];
+                    const food = foodDatabase[index];
                     
-                    el('food-name').value = foodToEdit.name;
-                    el('food-unit').value = foodToEdit.unit;
-                    el('calories').value = foodToEdit.calories || '';
-                    el('protein').value = foodToEdit.protein || '';
-                    el('carbs').value = foodToEdit.carbs || '';
-                    el('fat').value = foodToEdit.fat || '';
+                    el('food-name').value = food.name;
+                    el('food-unit').value = food.unit;
+                    el('calories').value = food.calories || '';
+                    el('protein').value = food.protein || '';
+                    el('carbs').value = food.carbs || '';
+                    el('fat').value = food.fat || '';
 
-                    currentFoodPortions = foodToEdit.portions || {};
+                    currentFoodPortions = food.portions || {};
                     renderCurrentPortions();
 
-                    const microsContainer = el('micros-inputs-container');
-                    microsContainer.innerHTML = '';
-                    if (foodToEdit.micros && Object.keys(foodToEdit.micros).length > 0) {
-                        el('toggle-micros-btn').click(); // Show the section
-                        Object.keys(foodToEdit.micros).forEach(microKey => {
-                            if(microsContainer.querySelector(`#micro-${microKey}`)) {
-                                microsContainer.querySelector(`#micro-${microKey}`).value = foodToEdit.micros[microKey];
-                            }
-                        });
+                    if(food.micros && Object.values(food.micros).some(v => v > 0)) {
+                         el('toggle-micros-btn').click();
+                         Object.keys(food.micros).forEach(key => { if(el(`micro-${key}`)) el(`micro-${key}`).value = food.micros[key]; });
                     }
-
+                     if(food.breakdown && Object.values(food.breakdown).some(v => v > 0)) {
+                         el('toggle-breakdown-btn').click();
+                         Object.keys(food.breakdown).forEach(key => { if(el(`breakdown-${key}`)) el(`breakdown-${key}`).value = food.breakdown[key]; });
+                    }
+                    closeModal(modals.manageFoods);
                     openModal(modals.single);
                 }
             });
-            
+
             foodSelect.addEventListener('change', e => {
                 const foodIndex = e.target.value;
                 const unitSelect = el('log-unit-select');
@@ -987,19 +1266,12 @@
                 const foodIndex = foodSelect.value;
                 const quantity = parseFloat(el('log-quantity').value);
                 const unit = el('log-unit-select').value;
-
-                if (foodIndex === '' || !quantity || quantity <= 0 || !unit) return showAlert('Please fill all fields to log food.');
+                if (foodIndex === '' || !quantity || !unit) return showAlert('Please fill all fields to log food.');
+                if (quantity <= 0) return showAlert('Quantity must be greater than zero.');
 
                 const food = foodDatabase[foodIndex];
-                let amountInGramsOrMl;
-
-                if (food.portions && food.portions[unit]) {
-                    amountInGramsOrMl = quantity * food.portions[unit];
-                } else {
-                    amountInGramsOrMl = quantity;
-                }
-
-                dailyLog.push({ foodIndex: parseInt(foodIndex), amount: amountInGramsOrMl }); 
+                let amountInGramsOrMl = (food.portions && food.portions[unit]) ? quantity * food.portions[unit] : quantity;
+                dailyLog.push({ foodIndex: parseInt(foodIndex), amount: amountInGramsOrMl, unit: unit }); 
                 saveData(); 
                 updateUI(); 
                 checkAchievements(); 
@@ -1007,11 +1279,29 @@
                 el('log-unit-select').innerHTML = '';
             });
 
+
             dailyLogList.addEventListener('click', (e) => { if (e.target.classList.contains('delete-log-btn')) { dailyLog.splice(e.target.dataset.index, 1); saveData(); updateUI(); } });
             resetDayBtn.addEventListener('click', async () => { if (await showAlert(translations.resetConfirm[currentLang], [{ text: 'Cancel', resolvesTo: false }, { text: 'Reset', class: 'btn-danger', resolvesTo: true }])) { dailyLog = []; waterIntake = 0; saveData(); updateUI(); } });
-            goalsForm.addEventListener('input', () => { Object.keys(dailyGoals).forEach(g => dailyGoals[g] = parseFloat(el(`goal-${g}`).value) || 0); saveData(); updateUI(); });
+            goalsForm.addEventListener('input', (e) => { if (parseFloat(e.target.value) < 0) e.target.value = 0; Object.keys(dailyGoals).forEach(g => dailyGoals[g] = parseFloat(el(`goal-${g}`).value) || 0); saveData(); updateUI(); });
+            microsGoalsContainer.addEventListener('input', (e) => { if(e.target.classList.contains('micros-goal-input')) { if (parseFloat(e.target.value) < 0) e.target.value = 0; customMicrosGoals[e.target.dataset.micro] = parseFloat(e.target.value) || 0; saveData(); } });
             adaptiveThemeToggle.addEventListener('change', (e) => { adaptiveThemeEnabled = e.target.checked; saveData(); applyTheme(); });
-            el('export-data-btn').addEventListener('click', () => { const data = {}; for (let i = 0; i < localStorage.length; i++) { const key = localStorage.key(i); if (key.startsWith('dailyLog_') || ['foodDatabase', 'dailyGoals', 'adaptiveThemeEnabled', 'unlockedAchievements', 'customPortions', 'weightLog'].includes(key)) { data[key] = localStorage.getItem(key); } } const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = `nutrification-backup-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(a.href); showAlert(translations.exportSuccessAlert[currentLang]); });
+            el('export-data-btn').addEventListener('click', () => { 
+                const data = {}; 
+                const keysToExport = ['foodDatabase', 'dailyGoals', 'customMicrosGoals', 'adaptiveThemeEnabled', 'unlockedAchievements', 'language', 'customPortions', 'weightLog'];
+                
+                keysToExport.forEach(key => {
+                    const item = localStorage.getItem(key);
+                    if (item) data[key] = item;
+                });
+
+                for (let i = 0; i < localStorage.length; i++) { 
+                    const key = localStorage.key(i); 
+                    if (key.startsWith('dailyLog_') || key.startsWith('waterIntake_')) { 
+                        data[key] = localStorage.getItem(key); 
+                    } 
+                } 
+                const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = `nutrification-backup-${new Date().toISOString().split('T')[0]}.json`; a.click(); URL.revokeObjectURL(a.href); showAlert(translations.exportSuccessAlert[currentLang]); 
+            });
             el('import-data-btn').addEventListener('click', () => el('import-file-input').click());
             el('import-file-input').addEventListener('change', (e) => { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = async (event) => { try { const data = JSON.parse(event.target.result); if (await showAlert(translations.importConfirm[currentLang], [{ text: 'Cancel', resolvesTo: false }, { text: 'Import', class: 'btn-danger', resolvesTo: true }])) { Object.keys(data).forEach(key => localStorage.setItem(key, data[key])); init(); showAlert(translations.importSuccessAlert[currentLang]); } } catch (error) { showAlert(`Error importing file: ${error.message}`); } }; reader.readAsText(file); e.target.value = ''; });
             
@@ -1022,39 +1312,50 @@
                 if(!container.classList.contains('hidden') && container.innerHTML === '') {
                     const createMicroSection = (title, keys) => {
                         container.innerHTML += `<h4 class="col-span-2 text-md font-semibold mt-2">${title}</h4>`;
-                        keys.forEach(micro => {
-                            const unit = MICRONUTRIENTS[micro];
-                            container.innerHTML += `<div><label for="micro-${micro}" class="text-sm">${micro.replace('vitamin', 'Vit ')} (${unit})</label><input type="number" id="micro-${micro}" data-micro="${micro}" step="0.1" placeholder="0" class="!py-1"></div>`;
-                        });
+                        keys.forEach(micro => container.innerHTML += `<div><label for="micro-${micro}" class="text-sm">${micro.replace('vitamin', 'Vit ')} (${MICRONUTRIENTS[micro]})</label><input type="number" id="micro-${micro}" data-micro="${micro}" step="0.1" min="0" placeholder="per 100g/ml" class="!py-1"></div>`);
                     }
                     createMicroSection('Vitamins', Object.keys(MICRONUTRIENTS).filter(k => k.startsWith('vitamin')));
                     createMicroSection('Minerals', Object.keys(MICRONUTRIENTS).filter(k => !k.startsWith('vitamin') && k !== 'omega3'));
                     createMicroSection('Fats', ['omega3']);
                 }
             });
-            el('add-new-portion-btn').addEventListener('click', () => {
-                const name = el('new-portion-name').value.trim();
-                const value = parseFloat(el('new-portion-value').value);
-                if(name && value > 0) {
-                    currentFoodPortions[name] = value;
-                    renderCurrentPortions();
-                    el('new-portion-name').value = '';
-                    el('new-portion-value').value = '';
+             el('toggle-breakdown-btn').addEventListener('click', () => {
+                const container = el('breakdown-inputs-container');
+                container.classList.toggle('hidden');
+                if (!container.classList.contains('hidden') && container.innerHTML === '') {
+                    Object.keys(MACRO_BREAKDOWNS).forEach(macro => {
+                        const breakdown = MACRO_BREAKDOWNS[macro];
+                        if (Object.keys(breakdown.fields).length > 0) {
+                            let fieldsHTML = '';
+                            Object.keys(breakdown.fields).forEach(field => {
+                                fieldsHTML += `<div><label for="breakdown-${field}" class="text-sm">${breakdown.fields[field]}</label><input type="number" id="breakdown-${field}" data-field="${field}" step="0.1" min="0" placeholder="per 100g/ml" class="!py-1"></div>`;
+                            });
+                            container.innerHTML += `<div class="p-2 border rounded-md"><h4 class="col-span-2 text-md font-semibold mb-2">${breakdown.label}</h4><div class="grid grid-cols-2 gap-2">${fieldsHTML}</div></div>`;
+                        }
+                    });
+                }
+            });
+            el('add-new-portion-btn').addEventListener('click', () => { 
+                const name = el('new-portion-name').value.trim(); 
+                const value = parseFloat(el('new-portion-value').value); 
+                if (name && value > 0) { 
+                    currentFoodPortions[name] = value; 
+                    renderCurrentPortions(); 
+                    el('new-portion-name').value = ''; 
+                    el('new-portion-value').value = ''; 
+                } else {
+                    showAlert('Please enter a valid portion name and a value greater than zero.');
                 }
             });
             
             waterTracker.addEventListener('click', e => {
                 const glass = e.target.closest('.glass');
                 if(glass) {
-                    if(!audioCtx) {
-                        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { console.error("Web Audio API not supported"); }
-                    }
-                    
-                    waterIntake = parseInt(glass.dataset.index);
-                    if(glass.classList.contains('filled') && waterIntake === document.querySelectorAll('.glass.filled').length) {
-                         waterIntake--;
-                    }
-                    
+                    if(!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { console.error("Web Audio API not supported"); } }
+                    let currentIntake = document.querySelectorAll('.glass.filled').length;
+                    let newIntake = parseInt(glass.dataset.index);
+                    if(newIntake === currentIntake && glass.classList.contains('filled')) { waterIntake = newIntake - 1; } 
+                    else { waterIntake = newIntake; }
                     playPlopSound();
                     saveData();
                     renderWaterTracker();
@@ -1062,47 +1363,31 @@
             });
             
             logWeightBtn.addEventListener('click', () => openModal(modals.weight));
-            el('log-weight-form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const weight = parseFloat(el('weight-input').value);
-                if(weight > 0) {
-                    const dateKey = new Date().toISOString().split('T')[0];
-                    weightLog[dateKey] = weight;
-                    saveData();
-                    updateUI();
-                    closeModal(modals.weight);
+            el('log-weight-form').addEventListener('submit', (e) => { 
+                e.preventDefault(); 
+                const weight = parseFloat(el('weight-input').value); 
+                if(weight > 0) { 
+                    const dateKey = new Date().toISOString().split('T')[0]; 
+                    weightLog[dateKey] = weight; 
+                    saveData(); 
+                    updateUI(); 
+                    closeModal(modals.weight); 
+                } else {
+                    showAlert('Please enter a valid weight greater than zero.');
                 }
             });
             
-            prevMonthBtn.addEventListener('click', () => {
-                currentlyViewedDate.setMonth(currentlyViewedDate.getMonth() - 1);
-                updateUI();
-            });
-            nextMonthBtn.addEventListener('click', () => {
-                currentlyViewedDate.setMonth(currentlyViewedDate.getMonth() + 1);
-                updateUI();
-            });
+            prevMonthBtn.addEventListener('click', () => { currentlyViewedDate.setMonth(currentlyViewedDate.getMonth() - 1); updateUI(); });
+            nextMonthBtn.addEventListener('click', () => { currentlyViewedDate.setMonth(currentlyViewedDate.getMonth() + 1); updateUI(); });
+            viewChartDetailsBtn.addEventListener('click', renderDetailedMonthlyChart);
 
             function renderCurrentPortions() {
-                const container = el('new-food-portions-container');
-                container.innerHTML = '';
-                Object.keys(currentFoodPortions).forEach(name => {
-                    const value = currentFoodPortions[name];
-                    container.innerHTML += `<div class="text-sm bg-gray-100 p-2 rounded flex justify-between"><span>1 ${name} = ${value}${el('food-unit').value}</span><button type="button" data-name="${name}" class="text-red-500 font-bold delete-portion-btn">X</button></div>`;
-                });
+                const container = el('new-food-portions-container'); container.innerHTML = '';
+                Object.keys(currentFoodPortions).forEach(name => { const value = currentFoodPortions[name]; container.innerHTML += `<div class="text-sm bg-gray-100 p-2 rounded flex justify-between"><span>1 ${name} = ${value}${el('food-unit').value}</span><button type="button" data-name="${name}" class="text-red-500 font-bold delete-portion-btn">X</button></div>`; });
             }
-
-            el('new-food-portions-container').addEventListener('click', e => {
-                if(e.target.classList.contains('delete-portion-btn')) {
-                    delete currentFoodPortions[e.target.dataset.name];
-                    renderCurrentPortions();
-                }
-            });
+            el('new-food-portions-container').addEventListener('click', e => { if(e.target.classList.contains('delete-portion-btn')) { delete currentFoodPortions[e.target.dataset.name]; renderCurrentPortions(); } });
             
-            const init = () => {
-                loadData();
-                updateUI();
-            };
+            const init = () => { loadData(); updateUI(); };
             init();
         });
     </script>
