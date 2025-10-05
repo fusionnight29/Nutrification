@@ -100,9 +100,18 @@
         }
 
 
-        /* FAB */
+        /* FAB container */
+        .fab-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            flex-direction: column-reverse;
+            align-items: center;
+            gap: 1rem;
+            z-index: 40;
+        }
         .fab {
-            position: fixed; bottom: 2rem; right: 2rem;
             width: 4rem; height: 4rem;
             background: var(--primary-gradient);
             color: white;
@@ -110,10 +119,14 @@
             display: flex; align-items: center; justify-content: center;
             font-size: 2rem; line-height: 1;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            cursor: pointer; transition: transform 0.2s, background 0.5s ease, box-shadow 0.2s ease;
-            z-index: 40;
+            cursor: pointer; transition: all 0.3s ease;
         }
         .fab:hover { transform: scale(1.1) rotate(90deg); box-shadow: 0 8px 16px rgba(0,0,0,0.3); }
+        .fab-secondary {
+            width: 3rem; height: 3rem; font-size: 1.5rem;
+            background: #f59e0b;
+        }
+         .fab-secondary:hover { transform: scale(1.1); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
 
 
         /* Circular Progress */
@@ -144,11 +157,11 @@
         .progress-bar { height: 100%; border-radius: 9999px; transition: width 0.3s ease-in-out; }
 
 
-        #micros-modal-content::-webkit-scrollbar { width: 8px; }
-        #micros-modal-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-        .dark #micros-modal-content::-webkit-scrollbar-track { background: #374151; }
-        #micros-modal-content::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
-        #micros-modal-content::-webkit-scrollbar-thumb:hover { background: #555; }
+        #micros-modal-content::-webkit-scrollbar, #micros-goals-modal-content::-webkit-scrollbar { width: 8px; }
+        #micros-modal-content::-webkit-scrollbar-track, #micros-goals-modal-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .dark #micros-modal-content::-webkit-scrollbar-track, .dark #micros-goals-modal-content::-webkit-scrollbar-track { background: #374151; }
+        #micros-modal-content::-webkit-scrollbar-thumb, #micros-goals-modal-content::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+        #micros-modal-content::-webkit-scrollbar-thumb:hover, #micros-goals-modal-content::-webkit-scrollbar-thumb:hover { background: #555; }
         
         .glass { cursor: pointer; transition: transform 0.2s; }
         .glass:hover { transform: scale(1.1); }
@@ -194,13 +207,7 @@
 
 
             <div class="card">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl" data-translate="summaryTitle">Today's Nutrition Summary</h2>
-                    <button id="view-micros-btn" class="btn btn-primary !py-1 !px-3 text-sm flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h1V7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7h1V2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1v-3Z"/></svg>
-                        <span data-translate="viewMicrosButton">Micronutrients</span>
-                    </button>
-                </div>
+                <h2 class="text-xl mb-4" data-translate="summaryTitle">Today's Nutrition Summary</h2>
                 <div id="circular-totals-display" class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                     <!-- Circular progress bars will be injected here -->
                 </div>
@@ -213,14 +220,6 @@
                 <p id="water-counter" class="text-center text-sm mt-3" style="color: var(--text-color-secondary);"></p>
             </div>
             <div class="card">
-                <h2 class="text-xl mb-3" data-translate="logFoodTitle">Log Food for Today</h2>
-                 <form id="log-food-form" class="flex flex-col sm:flex-row items-center gap-3">
-                    <select id="food-select" class="flex-grow" required><option value="" data-translate="selectFoodOption">-- Select a food --</option></select>
-                    <input type="number" id="log-quantity" value="1" min="0.1" step="0.1" class="w-full sm:w-20" required>
-                    <select id="log-unit-select" class="w-full sm:w-auto"></select>
-                    <button type="submit" class="btn btn-success w-full sm:w-auto" data-translate="logButton">Log</button>
-                </form>
-                <hr class="my-4 border-gray-200 dark:border-gray-700">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-lg" data-translate="todaysLogTitle">Today's Log</h3>
                     <button id="reset-day-btn" class="btn btn-danger text-sm" data-translate="resetButton">Reset</button>
@@ -237,7 +236,10 @@
                     <div>
                          <div class="flex justify-between items-center mb-3">
                              <h3 id="monthly-chart-title" class="text-lg"></h3>
-                             <button id="view-chart-details-btn" class="btn btn-info !py-1 !px-3 text-sm">View Details</button>
+                             <div class="flex gap-2">
+                                <button id="view-micros-btn" class="btn btn-primary !py-1 !px-3 text-sm" data-translate="viewMicrosButton">Micronutrients</button>
+                                <button id="view-chart-details-btn" class="btn btn-info !py-1 !px-3 text-sm" data-translate="viewBreakdownButton">Macronutrients</button>
+                             </div>
                          </div>
                         <canvas id="monthly-chart"></canvas>
                         <canvas id="weight-chart" class="mt-6"></canvas>
@@ -250,8 +252,13 @@
             </div>
         </div>
         
-        <!-- Floating Action Button -->
-        <div id="fab" class="fab">+</div>
+        <!-- Floating Action Buttons -->
+        <div class="fab-container">
+            <div id="fab-add-data" class="fab fab-secondary">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </div>
+            <div id="fab-log" class="fab">+</div>
+        </div>
     </div>
     
     <!-- MODALS & SETTINGS PAGE -->
@@ -268,16 +275,11 @@
                 </div>
                 <div class="card">
                     <h2 class="text-xl mb-3" data-translate="goalsTitle">Set Your Daily Goals</h2>
-                    <form id="goals-form" class="grid grid-cols-2 gap-3">
-                        <div><label for="goal-calories" class="block text-sm font-medium">Calories</label><input type="number" id="goal-calories" min="0" placeholder="2300"></div>
-                        <div><label for="goal-protein" class="block text-sm font-medium">Protein (g)</label><input type="number" id="goal-protein" min="0" placeholder="170"></div>
-                        <div><label for="goal-carbs" class="block text-sm font-medium">Carbs (g)</label><input type="number" id="goal-carbs" min="0" placeholder="230"></div>
-                        <div><label for="goal-fat" class="block text-sm font-medium">Fat (g)</label><input type="number" id="goal-fat" min="0" placeholder="75"></div>
-                    </form>
+                    <button id="set-daily-goals-btn" class="btn btn-primary w-full">Set Daily Macro Goals</button>
                 </div>
                  <div class="card">
                     <h2 class="text-xl mb-4" data-translate="microsGoalsTitle">Set Custom Micronutrient Goals (Monthly)</h2>
-                    <div id="micros-goals-container" class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-4"></div>
+                    <button id="set-micros-goals-btn" class="btn btn-primary w-full">Set Custom Micro Goals</button>
                 </div>
                 <div class="card">
                     <h3 class="text-lg mb-3" data-translate="savedFoodsTitle">Saved Foods</h3>
@@ -311,6 +313,9 @@
     <div id="pie-chart-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 id="pie-chart-title" class="text-xl mb-4 text-center"></h2><canvas id="pie-chart-canvas"></canvas></div></div>
     <div id="monthly-chart-detail-modal" class="modal-overlay"><div class="modal-content !max-w-2xl"><button class="close-btn">&times;</button><h2 id="monthly-chart-detail-title" class="text-xl mb-4 text-center"></h2><canvas id="monthly-chart-detail-canvas"></canvas></div></div>
     <div id="manage-foods-modal" class="modal-overlay"><div class="modal-content !max-w-lg"><button class="close-btn">&times;</button><h2 class="text-xl mb-4">Manage Saved Foods</h2><input type="search" id="food-db-search" placeholder="Search your foods..." class="mb-4"><div id="manage-food-list" class="space-y-2 max-h-[60vh] overflow-y-auto"></div></div></div>
+    <div id="daily-goals-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 class="text-xl mb-4">Set Daily Macro Goals</h2><form id="daily-goals-form" class="grid grid-cols-2 gap-4"><div><label for="modal-goal-calories" class="block text-sm font-medium">Calories</label><input type="number" id="modal-goal-calories" min="0" placeholder="2300"></div><div><label for="modal-goal-protein" class="block text-sm font-medium">Protein (g)</label><input type="number" id="modal-goal-protein" min="0" placeholder="170"></div><div><label for="modal-goal-carbs" class="block text-sm font-medium">Carbs (g)</label><input type="number" id="modal-goal-carbs" min="0" placeholder="230"></div><div><label for="modal-goal-fat" class="block text-sm font-medium">Fat (g)</label><input type="number" id="modal-goal-fat" min="0" placeholder="75"></div></form><button id="save-daily-goals-btn" class="btn btn-success w-full mt-6">Save Goals</button></div></div>
+    <div id="micros-goals-modal" class="modal-overlay"><div class="modal-content !max-w-3xl"><button class="close-btn">&times;</button><h2 class="text-xl mb-4">Set Custom Micronutrient Goals (Monthly)</h2><div id="micros-goals-modal-content" class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-4 max-h-[60vh] overflow-y-auto pr-2"></div><button id="save-micros-goals-btn" class="btn btn-success w-full mt-6">Save Goals</button></div></div>
+    <div id="quick-log-modal" class="modal-overlay"><div class="modal-content"><button class="close-btn">&times;</button><h2 class="text-xl mb-4">Quick Log Food</h2><form id="quick-log-food-form" class="flex flex-col gap-3"><select id="quick-log-food-select" class="flex-grow" required><option value="">-- Select a food --</option></select><input type="number" id="quick-log-quantity" value="1" min="0.1" step="0.1" required><select id="quick-log-unit-select"></select><button type="submit" class="btn btn-success w-full">Log</button></form></div></div>
 
     <footer class="text-center p-4 mt-8 text-sm text-gray-500">
         For comments, feature requests, or to request a bulk diet plan import, please mail to: 
@@ -328,14 +333,13 @@
             const greetingEl = el('greeting');
             const insightMessageEl = el('insight-message');
             const circularTotalsDisplay = el('circular-totals-display');
-            const fab = el('fab');
+            const fabLog = el('fab-log');
+            const fabAddData = el('fab-add-data');
             const settingsPage = el('settings-page');
             const openSettingsPageBtn = el('open-settings-page-btn');
             const achievementsGrid = el('achievements-grid');
             const adaptiveThemeToggle = el('adaptive-theme-toggle');
             const languageSelect = el('language-select');
-            const foodSelect = el('food-select');
-            const logFoodForm = el('log-food-form');
             const dailyLogList = el('daily-log-list');
             const resetDayBtn = el('reset-day-btn');
             const monthlyChartEl = el('monthly-chart');
@@ -344,14 +348,14 @@
             const heatmapLegendEl = el('heatmap-legend');
             const monthlyChartTitle = el('monthly-chart-title');
             const heatmapTitle = el('heatmap-title');
-            const goalsForm = el('goals-form');
             const waterTracker = el('water-tracker');
             const logWeightBtn = el('log-weight-btn');
             const prevMonthBtn = el('prev-month-btn');
             const nextMonthBtn = el('next-month-btn');
-            const microsGoalsContainer = el('micros-goals-container');
             const viewChartDetailsBtn = el('view-chart-details-btn');
             const manageFoodsBtn = el('manage-foods-btn');
+            const setDailyGoalsBtn = el('set-daily-goals-btn');
+            const setMicrosGoalsBtn = el('set-micros-goals-btn');
 
 
             const modals = {
@@ -362,6 +366,9 @@
                 pie: el('pie-chart-modal'),
                 monthlyChartDetail: el('monthly-chart-detail-modal'),
                 manageFoods: el('manage-foods-modal'),
+                dailyGoals: el('daily-goals-modal'),
+                microsGoals: el('micros-goals-modal'),
+                quickLog: el('quick-log-modal'),
             };
 
 
@@ -425,7 +432,6 @@
                 insightDefault: { en: "Let's get those calories logged for today!", hi: 'आइए आज के लिए उन calories को लॉग करें!', bn: 'চলুন আজকের calories লগ করা যাক!' },
                 summaryTitle: { en: "Today's Nutrition Summary", hi: "आज का Nutrition Summary", bn: "আজকের Nutrition Summary" },
                 monthlyOverviewTitle: { en: 'Monthly Overview', hi: 'Monthly Overview', bn: 'Monthly Overview' },
-                logFoodTitle: { en: 'Log Food for Today', hi: 'आज के लिए खाना लॉग करें', bn: 'আজকের জন্য খাবার লগ করুন' },
                 selectFoodOption: { en: '-- Select a food --', hi: '-- एक भोजन चुनें --', bn: '-- একটি খাবার নির্বাচন করুন --' },
                 logButton: { en: 'Log', hi: 'लॉग', bn: 'লগ' },
                 todaysLogTitle: { en: "Today's Log", hi: "आज का Log", bn: "আজকের Log" },
@@ -449,7 +455,7 @@
                 bulkImportTitle: { en: 'Bulk Data Import', hi: 'थोक डेटा आयात', bn: 'বাল্ক ডেটা ইম্পোর্ট' },
                 bulkImportInstructions: { en: 'Enter one food per line. Format: Name,Unit,Cals,Prot,Carb,Fat', hi: 'प्रति पंक्ति एक भोजन दर्ज करें। प्रारूप: নাম,इकाई,कैलोरी,प्रोटीन,कार्ब,वसा', bn: 'प्रति লাইনে একটি করে খাবার লিখুন। ফরম্যাট: নাম, ইউনিট, ক্যালোরি, প্রোটিন, কার্ব, ফ্যাট' },
                 bulkImportPlaceholder: { en: 'Cooked Rice,g,130,2.7,28,0.3\nMilk,ml,42,3.4,5,1', hi: 'पका हुआ चावल,g,130,2.7,28,0.3\nदूध,ml,42,3.4,5,1', bn: 'রান্না করা ভাত,g,130,2.7,28,0.3\nদুধ,ml,42,3.4,5,1' },
-                importFoodsButton: { en: 'Import Foods', hi: 'खाद्य पदार्थ आयात करें', bn: 'खাবার ইম্পোর্ট করুন' },
+                importFoodsButton: { en: 'Import Foods', hi: 'खाद्य पदार्थ आयात करें', bn: 'খাবার ইম্পোর্ট করুন' },
                 statusLabel: { en: 'Status', hi: 'स्थिति', bn: 'স্ট্যাটাস' },
                 intakeLabel: { en: 'Intake', hi: 'सेवन', bn: 'গ্রহণ' },
                 targetLabel: { en: 'Target', hi: 'लक्ष्य', bn: 'লক্ষ্য' },
@@ -460,6 +466,7 @@
                 resetConfirm: { en: "Clear today's log?", hi: 'आज का लॉग साफ़ करें?', bn: 'আজকের লগ সাফ করবেন?' },
                 importConfirm: { en: 'This will overwrite all current data?', hi: 'यह सभी मौजूदा डेटा को अधिलेखित कर देगा?', bn: 'এটি সমস্ত বর্তমান ডেটা ওভাররাইট করবে?' },
                 viewMicrosButton: { en: 'Micronutrients', hi: 'Micronutrients', bn: 'Micronutrients' },
+                viewBreakdownButton: { en: 'Macronutrients', hi: 'Macronutrients', bn: 'Macronutrients' },
                 portionsTitle: { en: 'My Portions', hi: 'मेरे हिस्से', bn: 'আমার অংশ' },
                 microsTitle: { en: 'Monthly Micronutrient Details', hi: 'Micronutrient विवरण', bn: 'Micronutrient বিবরণ' },
                 hydrationTitle: { en: "Today's Hydration", hi: 'आज का हाइड्रेशन', bn: 'আজকের হাইড্রেশন' },
@@ -470,13 +477,13 @@
                 currentLang = lang;
                 document.querySelectorAll('[data-translate]').forEach(el => {
                     const key = el.dataset.translate;
-                    if (translations[key]) {
-                        el.textContent = translations[key][lang];
+                    if (translations[key] && translations[key][lang]) {
+                         el.textContent = translations[key][lang];
                     }
                 });
                 document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
                     const key = el.dataset.translatePlaceholder;
-                    if (translations[key]) {
+                    if (translations[key] && translations[key][lang]) {
                         el.placeholder = translations[key][lang];
                     }
                 });
@@ -741,7 +748,7 @@
                     }
                     if(loggedFoodIndices.size >= 50) newlyUnlocked.push('explorer');
                 }
-                if(!unlockedAchievements.includes('dbBuilder') && foodDatabase.length >= 25) {
+                if(!unlockedAchievements.includes('dbBuilder') && foodDatabase.filter(f => !f.deleted).length >= 25) {
                     newlyUnlocked.push('dbBuilder');
                 }
                 
@@ -786,16 +793,33 @@
                 return count;
             };
 
-            const populateFoodSelect = () => {
-                foodSelect.innerHTML = `<option value="">${translations.selectFoodOption[currentLang]}</option>`;
+            const populateFoodSelects = () => {
+                const select = el('quick-log-food-select');
+                select.innerHTML = `<option value="">${translations.selectFoodOption[currentLang]}</option>`;
                 foodDatabase.forEach((food, index) => {
                     if (food && !food.deleted) {
                         const optionEl = document.createElement('option');
                         optionEl.value = index; 
                         optionEl.textContent = `${food.name} (per 100${food.unit})`;
-                        foodSelect.appendChild(optionEl);
+                        select.appendChild(optionEl);
                     }
                 });
+            };
+
+            const populateUnitSelect = (foodIndex, unitSelectElement) => {
+                unitSelectElement.innerHTML = '';
+                if (foodIndex !== '') {
+                    const food = foodDatabase[foodIndex];
+                    if (food) {
+                        const customUnits = food.portions ? Object.keys(food.portions) : [];
+                        [...new Set([...customUnits, food.unit])].forEach(unit => {
+                            const option = document.createElement('option');
+                            option.value = unit;
+                            option.textContent = unit;
+                            unitSelectElement.appendChild(option);
+                        });
+                    }
+                }
             };
 
             const renderDailyLog = () => {
@@ -811,17 +835,7 @@
                     dailyLogList.appendChild(logEl);
                 });
             };
-            const renderGoals = () => {
-                Object.keys(dailyGoals).forEach(g => el(`goal-${g}`).value = dailyGoals[g] || '');
-                microsGoalsContainer.innerHTML = '';
-                Object.keys(MICRONUTRIENTS).forEach(micro => {
-                    microsGoalsContainer.innerHTML += `<div><label for="goal-${micro}" class="block text-sm font-medium capitalize">${micro.replace('vitamin', 'Vit ')} (${MICRONUTRIENTS[micro]})</label><input type="number" id="goal-${micro}" data-micro="${micro}" min="0" class="micros-goal-input" placeholder="${RDAs[micro] * 30}"></div>`;
-                });
-                Object.keys(customMicrosGoals).forEach(micro => {
-                    const input = el(`goal-${micro}`);
-                    if (input) input.value = customMicrosGoals[micro];
-                });
-            };
+            
             const getMonthlyData = (date) => {
                 const prefix = `dailyLog_${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-`;
                 let data = {};
@@ -1104,9 +1118,8 @@
                 applyTheme();
                 renderGreetingAndInsight();
                 renderCircularTotals();
-                populateFoodSelect();
+                populateFoodSelects();
                 renderDailyLog();
-                renderGoals();
                 renderMonthlyOverview(currentlyViewedDate);
                 renderAchievements();
                 renderWaterTracker();
@@ -1134,17 +1147,11 @@
 
 
             // --- EVENT LISTENERS ---
-            fab.addEventListener('click', () => {
-                editingFoodIndex = null;
-                el('add-food-form').reset();
-                el('micros-inputs-container').innerHTML = '';
-                el('micros-inputs-container').classList.add('hidden');
-                el('breakdown-inputs-container').innerHTML = '';
-                el('breakdown-inputs-container').classList.add('hidden');
-                el('new-food-portions-container').innerHTML = '';
-                currentFoodPortions = {};
-                openModal(modals.choice)
+            fabLog.addEventListener('click', () => {
+                openModal(modals.quickLog);
             });
+            fabAddData.addEventListener('click', () => openModal(modals.choice));
+
             openSettingsPageBtn.addEventListener('click', () => openModal(settingsPage));
             Object.values(modals).forEach(m => {
                 m.addEventListener('click', (e) => { if (e.target === m) closeModal(m); });
@@ -1152,7 +1159,7 @@
             });
             el('open-single-food-modal-btn').addEventListener('click', () => { closeModal(modals.choice); openModal(modals.single); });
             el('open-bulk-import-modal-btn').addEventListener('click', () => { closeModal(modals.choice); openModal(modals.bulk); });
-            
+
             languageSelect.addEventListener('change', (e) => { setLanguage(e.target.value); saveData(); updateUI(); });
 
 
@@ -1245,27 +1252,16 @@
                     openModal(modals.single);
                 }
             });
+            
+            // Listeners for unit population
+            el('quick-log-food-select').addEventListener('change', e => populateUnitSelect(e.target.value, el('quick-log-unit-select')));
 
-            foodSelect.addEventListener('change', e => {
-                const foodIndex = e.target.value;
-                const unitSelect = el('log-unit-select');
-                unitSelect.innerHTML = '';
-                if (foodIndex !== '') {
-                    const food = foodDatabase[foodIndex];
-                    const customUnits = food.portions ? Object.keys(food.portions) : [];
-                    [...new Set([...customUnits, food.unit])].forEach(unit => {
-                        const option = document.createElement('option');
-                        option.value = unit;
-                        option.textContent = unit;
-                        unitSelect.appendChild(option);
-                    });
-                }
-            });
-            logFoodForm.addEventListener('submit', (e) => { 
-                e.preventDefault(); 
-                const foodIndex = foodSelect.value;
-                const quantity = parseFloat(el('log-quantity').value);
-                const unit = el('log-unit-select').value;
+            // Listeners for form submission
+            el('quick-log-food-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const foodIndex = el('quick-log-food-select').value;
+                const quantity = parseFloat(el('quick-log-quantity').value);
+                const unit = el('quick-log-unit-select').value;
                 if (foodIndex === '' || !quantity || !unit) return showAlert('Please fill all fields to log food.');
                 if (quantity <= 0) return showAlert('Quantity must be greater than zero.');
 
@@ -1275,15 +1271,60 @@
                 saveData(); 
                 updateUI(); 
                 checkAchievements(); 
-                logFoodForm.reset();
-                el('log-unit-select').innerHTML = '';
+                el('quick-log-food-form').reset();
+                el('quick-log-unit-select').innerHTML = '';
+                closeModal(modals.quickLog);
             });
-
 
             dailyLogList.addEventListener('click', (e) => { if (e.target.classList.contains('delete-log-btn')) { dailyLog.splice(e.target.dataset.index, 1); saveData(); updateUI(); } });
             resetDayBtn.addEventListener('click', async () => { if (await showAlert(translations.resetConfirm[currentLang], [{ text: 'Cancel', resolvesTo: false }, { text: 'Reset', class: 'btn-danger', resolvesTo: true }])) { dailyLog = []; waterIntake = 0; saveData(); updateUI(); } });
-            goalsForm.addEventListener('input', (e) => { if (parseFloat(e.target.value) < 0) e.target.value = 0; Object.keys(dailyGoals).forEach(g => dailyGoals[g] = parseFloat(el(`goal-${g}`).value) || 0); saveData(); updateUI(); });
-            microsGoalsContainer.addEventListener('input', (e) => { if(e.target.classList.contains('micros-goal-input')) { if (parseFloat(e.target.value) < 0) e.target.value = 0; customMicrosGoals[e.target.dataset.micro] = parseFloat(e.target.value) || 0; saveData(); } });
+            
+            setDailyGoalsBtn.addEventListener('click', () => {
+                Object.keys(dailyGoals).forEach(g => el(`modal-goal-${g}`).value = dailyGoals[g] || '');
+                openModal(modals.dailyGoals);
+            });
+             el('save-daily-goals-btn').addEventListener('click', () => {
+                const inputs = modals.dailyGoals.querySelectorAll('input');
+                inputs.forEach(input => {
+                    if(parseFloat(input.value) < 0) input.value = 0;
+                });
+                dailyGoals.calories = parseFloat(el('modal-goal-calories').value) || 0;
+                dailyGoals.protein = parseFloat(el('modal-goal-protein').value) || 0;
+                dailyGoals.carbs = parseFloat(el('modal-goal-carbs').value) || 0;
+                dailyGoals.fat = parseFloat(el('modal-goal-fat').value) || 0;
+                saveData();
+                updateUI();
+                closeModal(modals.dailyGoals);
+                showAlert('Daily goals saved!');
+            });
+
+            setMicrosGoalsBtn.addEventListener('click', () => {
+                const container = el('micros-goals-modal-content');
+                container.innerHTML = '';
+                Object.keys(MICRONUTRIENTS).forEach(micro => {
+                    container.innerHTML += `<div><label for="modal-goal-${micro}" class="block text-sm font-medium capitalize">${micro.replace('vitamin', 'Vit ')} (${MICRONUTRIENTS[micro]})</label><input type="number" id="modal-goal-${micro}" data-micro="${micro}" min="0" class="micros-goal-input" placeholder="${RDAs[micro] * 30}" value="${customMicrosGoals[micro] || ''}"></div>`;
+                });
+                openModal(modals.microsGoals);
+            });
+
+            el('save-micros-goals-btn').addEventListener('click', () => {
+                const inputs = modals.microsGoals.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const micro = input.dataset.micro;
+                    const value = parseFloat(input.value);
+                    if (value > 0) {
+                        customMicrosGoals[micro] = value;
+                    } else {
+                        delete customMicrosGoals[micro];
+                    }
+                });
+                saveData();
+                updateUI();
+                closeModal(modals.microsGoals);
+                showAlert('Micronutrient goals saved!');
+            });
+
+
             adaptiveThemeToggle.addEventListener('change', (e) => { adaptiveThemeEnabled = e.target.checked; saveData(); applyTheme(); });
             el('export-data-btn').addEventListener('click', () => { 
                 const data = {}; 
@@ -1316,7 +1357,7 @@
                     }
                     createMicroSection('Vitamins', Object.keys(MICRONUTRIENTS).filter(k => k.startsWith('vitamin')));
                     createMicroSection('Minerals', Object.keys(MICRONUTRIENTS).filter(k => !k.startsWith('vitamin') && k !== 'omega3'));
-                    createMicroSection('Fats', ['omega3']);
+                    createSection('Fats', ['omega3']);
                 }
             });
              el('toggle-breakdown-btn').addEventListener('click', () => {
